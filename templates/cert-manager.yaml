@@ -1,0 +1,47 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: opnc-rootca-issuer
+spec:
+  selfSigned: {}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: root-ca
+spec:
+  secretName: opnc-ca-secret
+  isCA: true
+  commonName: opnc-root-ca
+  duration: 8760h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: opnc-rootca-issuer
+    kind: Issuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: opnc-ca-issuer
+spec:
+  ca:
+    secretName: opnc-ca-secret
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: opnc-tsl-cert
+spec:
+  secretName: opnc-tsl-secret
+  dnsNames:
+    - openproject.local
+    - nextcloud.local
+  issuerRef:
+    name: opnc-ca-issuer
+    kind: Issuer

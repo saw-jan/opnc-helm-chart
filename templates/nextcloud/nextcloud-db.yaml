@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-pgsql
+  labels:
+    app: database-pgsql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-pgsql
+  template:
+    metadata:
+      labels:
+        app: database-pgsql
+    spec:
+      containers:
+        - name: database-pgsql
+          image: postgres:14
+          env:
+            - name: POSTGRES_DB
+              value: nextcloud
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: PGUSER
+              value: postgres
+          ports:
+            - containerPort: 5432
+      #     volumeMounts:
+      #       - name: ncdb
+      #         mountPath: /var/lib/postgresql/data
+      # volumes:
+      #   - name: ncdb
+      #     persistentVolumeClaim:
+      #       claimName: ncdb-pvc

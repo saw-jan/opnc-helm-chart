@@ -1,0 +1,13 @@
+apiVersion: v2
+name: opnc
+description: Openproject and Nextcloud Helm Chart
+version: 0.1.0
+type: application
+keywords:
+  - openproject
+  - Nextcloud
+  - integration
+home: https://github.com/saw-jan/helm-opnc
+maintainers:
+  - name: saw-jan
+    url: https://github.com/saw-jan

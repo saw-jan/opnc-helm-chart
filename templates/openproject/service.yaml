@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openproject
+  labels:
+    app: openproject
+spec:
+  selector:
+    app: openproject
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# make external host available in the pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: op-dev-local
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: ingress-nginx-controller.ingress-nginx.svc.cluster.local

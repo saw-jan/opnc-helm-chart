@@ -1,0 +1,4 @@
+nextcloud:
+  phpVersion: '83'
+  nextcloudVersion: '31'
+  localPath: ''

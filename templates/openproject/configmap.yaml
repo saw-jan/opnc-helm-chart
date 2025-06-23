@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: op-configmap
+data:
+  openproject.sh: |
+{{ .Files.Get "scripts/openproject.sh" | indent 4 }}}}

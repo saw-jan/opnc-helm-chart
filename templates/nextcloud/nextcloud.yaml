@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  labels:
+    app: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+        - name: nextcloud
+          image: ghcr.io/juliusknorr/nextcloud-dev-php83:master
+          command: ['/shared/nextcloud.sh']
+          env:
+            - name: SQL
+              value: 'pgsql'
+            - name: PROTOCOL
+              value: 'https'
+            - name: VIRTUAL_HOST
+              value: 'nextcloud.local'
+            - name: SERVER_BRANCH
+              value: 'stable31'
+            - name: NEXTCLOUD_AUTOINSTALL
+              value: 'YES'
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: 'nextcloud.local'
+            - name: NEXTCLOUD_AUTOINSTALL_APPS
+              value: 'user_oidc oidc groupfolders'
+            - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
+              value: '60'
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            # - name: ncdata
+            #   mountPath: /var/www/html
+            # - name: apacheconf
+            #   mountPath: /etc/apache2
+            - name: tmp
+              mountPath: /tmp
+            - name: scripts
+              mountPath: /shared
+            - name: ca-cert
+              mountPath: /certs
+
+      volumes:
+        # - name: ncdata
+        #   persistentVolumeClaim:
+        #     claimName: ncdata-pvc
+        # - name: apacheconf
+        #   persistentVolumeClaim:
+        #     claimName: apacheconf-pvc
+        - name: tmp
+          emptyDir: {}
+        - name: ca-cert
+          secret:
+            secretName: opnc-ca-secret
+        - name: scripts
+          configMap:
+            name: scripts-configmap
+            defaultMode: 0755
+            items:
+            {{ range $path, $_ := .Files.Glob "scripts/nextcloud/**" }}
+              - key: {{ trimPrefix "scripts/nextcloud/" $path | replace "/" "_" }}
+                path: {{ trimPrefix "scripts/nextcloud/" $path }}
+            {{ end }}
