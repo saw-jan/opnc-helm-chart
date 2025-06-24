@@ -1,4 +1,23 @@
 nextcloud:
-  phpVersion: '83'
-  nextcloudVersion: '31'
-  localPath: ''
+  # Nextcloud version git branch
+  # E.g. stable31, stable30, master
+  version: ''
+  # Use local path for nextcloud source
+  # NOTE: full path is required
+  # Example: /path/to/nextcloud
+  localSrcPath: ''
+  # Nextcloud local apps directory
+  localAppsDir: ''
+
+openproject:
+  # OpenProject version (docker image tag)
+  # E.g. 16, 15.1, dev
+  version: '16'
+  # Git branch to use as the source
+  # Example: dev
+  gitSrcBranchName: ''
+  # Use local path for openproject source
+  # If set, 'gitSrcBranchName' will be ignored
+  # NOTE: full path is required
+  # Example: /path/to/openproject
+  localSrcPath: ''

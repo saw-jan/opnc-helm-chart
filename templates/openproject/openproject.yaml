@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: openproject
-          image: openproject/openproject:16
+          image: openproject/openproject:{{ .Values.openproject.version | default "dev" }}
           command: ['/scripts/openproject.sh']
           env:
             - name: OPENPROJECT_LOG__LEVEL
@@ -35,6 +35,14 @@ spec:
               value: 'true'
             - name: OPENPROJECT_AUTHENTICATION
               value: '{"global_basic_auth":{"user": "admin", "password": "admin"}}'
+          {{ if .Values.openproject.localSrcPath }}
+            - name: USE_CUSTOM_SOURCE
+              value: 'true'
+          {{ end }}
+          {{ if .Values.openproject.gitSrcBranchName }}
+            - name: GIT_SOURCE_BRANCH
+              value: {{ .Values.openproject.gitSrcBranchName }}
+          {{ end }}
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -44,6 +52,10 @@ spec:
               mountPath: /scripts
             - name: tmp
               mountPath: /tmp
+          {{ if .Values.openproject.localSrcPath }}
+            - name: local-opdata
+              mountPath: /app
+          {{ end }}
 
       volumes:
         - name: tmp
@@ -55,3 +67,9 @@ spec:
           configMap:
             name: op-configmap
             defaultMode: 0755
+      {{ if .Values.openproject.localSrcPath }}
+        - name: local-opdata
+          hostPath:
+            path: {{ .Values.openproject.localSrcPath }}
+            type: Directory
+      {{ end }}
