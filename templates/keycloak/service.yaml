@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: database-pgsql
+  name: keycloak-db
   labels:
-    app: database-pgsql
+    app: keycloak-db
 spec:
   selector:
-    app: database-pgsql
+    app: keycloak-db
   ports:
     - port: 5432
       targetPort: 5432
@@ -16,12 +16,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nextcloud
+  name: keycloak
   labels:
-    app: nextcloud
+    app: keycloak
 spec:
   selector:
-    app: nextcloud
+    app: keycloak
   ports:
-    - port: 80
-      targetPort: 80
+    - port: 8080
+      targetPort: 8080

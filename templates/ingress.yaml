@@ -12,6 +12,7 @@ spec:
     - hosts:
         - openproject.local
         - nextcloud.local
+        - keycloak.local
       secretName: opnc-tsl-secret
   rules:
     - host: openproject.local
@@ -34,3 +35,13 @@ spec:
                 name: nextcloud
                 port:
                   number: 80
+    - host: keycloak.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: realm-configmap
+data:
+  opnc-realm.json: |
+{{ .Files.Get "scripts/opnc-realm.json" | indent 4 }}}}
