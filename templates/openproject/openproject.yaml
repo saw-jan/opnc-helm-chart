@@ -53,7 +53,7 @@ spec:
             - name: tmp
               mountPath: /tmp
           {{ if .Values.openproject.localSrcPath }}
-            - name: local-opdata
+            - name: local-src
               mountPath: /app
           {{ end }}
 
@@ -68,7 +68,7 @@ spec:
             name: op-configmap
             defaultMode: 0755
       {{ if .Values.openproject.localSrcPath }}
-        - name: local-opdata
+        - name: local-src
           hostPath:
             path: {{ .Values.openproject.localSrcPath }}
             type: Directory
