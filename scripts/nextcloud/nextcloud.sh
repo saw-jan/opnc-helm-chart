@@ -16,6 +16,8 @@ git clone -b "${SERVER_BRANCH}" --depth 1 https://github.com/nextcloud/server.gi
 rsync -a --chmod=755 --chown=www-data:www-data /tmp/server/ /var/www/html
 chown www-data: -R /var/www/html/data
 chown www-data: /var/www/html/.htaccess
+mkdir -p /var/www/html/custom_apps
+chown www-data: -R /var/www/html/custom_apps
 
 # run the nextcloud setup
 /usr/local/bin/bootstrap.sh apache2-foreground
