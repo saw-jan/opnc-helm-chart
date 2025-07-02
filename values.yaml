@@ -1,15 +1,16 @@
 nextcloud:
   # Nextcloud version git branch
   # E.g. stable31, stable30, master
-  version: ''
+  version: 'stable30'
   # Git branch to use as the source
   # Example: release/2.9
-  integrationAppGitBranch: ''
+  integrationAppGitBranch: 'master'
 
 openproject:
   # OpenProject version (docker image tag)
   # E.g. 16, 15.1, dev
   version: ''
   # Git branch to use as the source
+  # NOTE: 'version' will be ignored if this is set
   # Example: dev
   gitSrcBranchName: ''

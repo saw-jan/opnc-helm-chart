@@ -2,26 +2,6 @@
 
 set -e
 
-WORKING_DIR=$(pwd)
-# shellcheck source=/dev/null
-source ~/.bashrc
-
-if [[ -n "$INTEGRATION_APP_GIT_BRANCH" ]]; then
-    echo "Using 'integration_openproject' app branch: ${INTEGRATION_APP_GIT_BRANCH}"
-    APP_DIR="custom_apps/integration_openproject"
-    rm -rf $APP_DIR || true
-    mkdir -p $APP_DIR
-    git clone --single-branch \
-        -b "${INTEGRATION_APP_GIT_BRANCH}" \
-        --depth 1 \
-        https://github.com/nextcloud/integration_openproject.git $APP_DIR
-    cd $APP_DIR
-    composer install --no-dev
-    npm ci && npm run dev
-fi
-
-cd "$WORKING_DIR"
-occ a:e integration_openproject
 occ security:certificates:import /etc/ssl/certs/ca-certificates.crt
 # setup user_oidc app
 occ config:app:set --value=1 user_oidc store_login_token

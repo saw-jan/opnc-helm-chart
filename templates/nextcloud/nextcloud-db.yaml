@@ -28,10 +28,10 @@ spec:
               value: postgres
           ports:
             - containerPort: 5432
-      #     volumeMounts:
-      #       - name: ncdb
-      #         mountPath: /var/lib/postgresql/data
-      # volumes:
-      #   - name: ncdb
-      #     persistentVolumeClaim:
-      #       claimName: ncdb-pvc
+          volumeMounts:
+            - name: ncdb
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: ncdb
+          persistentVolumeClaim:
+            claimName: ncdb-pvc

@@ -42,10 +42,12 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            # - name: ncdata
-            #   mountPath: /var/www/html
-            # - name: apacheconf
-            #   mountPath: /etc/apache2
+            - name: ncdata
+              mountPath: /var/www/html/data
+            - name: ncconfig
+              mountPath: /var/www/html/config
+            - name: ncapps
+              mountPath: /var/www/html/custom_apps
             - name: tmp
               mountPath: /tmp
             - name: scripts
@@ -54,12 +56,15 @@ spec:
               mountPath: /certs
 
       volumes:
-        # - name: ncdata
-        #   persistentVolumeClaim:
-        #     claimName: ncdata-pvc
-        # - name: apacheconf
-        #   persistentVolumeClaim:
-        #     claimName: apacheconf-pvc
+        - name: ncdata
+          persistentVolumeClaim:
+            claimName: ncdata-pvc
+        - name: ncconfig
+          persistentVolumeClaim:
+            claimName: ncconfig-pvc
+        - name: ncapps
+          persistentVolumeClaim:
+            claimName: ncapps-pvc
         - name: tmp
           emptyDir: {}
         - name: ca-cert
