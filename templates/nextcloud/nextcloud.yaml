@@ -32,12 +32,16 @@ spec:
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: 'nextcloud.local'
             - name: NEXTCLOUD_AUTOINSTALL_APPS
-              value: 'integration_openproject user_oidc oidc groupfolders'
+              value: 'user_oidc oidc groupfolders'
             - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
               value: '60'
           {{ if .Values.nextcloud.integrationAppGitBranch }}
             - name: INTEGRATION_APP_GIT_BRANCH
               value: {{ .Values.nextcloud.integrationAppGitBranch }}
+          {{ end }}
+          {{ if .Values.nextcloud.integrationAppVersion }}
+            - name: INTEGRATION_APP_VERSION
+              value: {{ .Values.nextcloud.integrationAppVersion }}
           {{ end }}
           ports:
             - containerPort: 80
