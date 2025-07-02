@@ -9,8 +9,8 @@ update-ca-certificates
 echo "Setting up Nextcloud server..."
 
 rm -rf /tmp/server || true
-# clone nextcloud server
-git clone -b "${SERVER_BRANCH}" --depth 1 https://github.com/nextcloud/server.git /tmp/server
+# get nextcloud server
+git clone --single-branch -b "${SERVER_BRANCH}" --depth 1 https://github.com/nextcloud/server.git /tmp/server
 
 (cd /tmp/server && git submodule update --init)
 rsync -a --chmod=755 --chown=www-data:www-data /tmp/server/ /var/www/html
@@ -18,6 +18,10 @@ chown www-data: -R /var/www/html/data
 chown www-data: /var/www/html/.htaccess
 mkdir -p /var/www/html/custom_apps
 chown www-data: -R /var/www/html/custom_apps
+
+# patch bootstrap script
+# disable demo users creation
+sed -i "s/^configure_add_user() {/configure_add_user() {\n\texit 0/" /usr/local/bin/bootstrap.sh
 
 # run the nextcloud setup
 /usr/local/bin/bootstrap.sh apache2-foreground

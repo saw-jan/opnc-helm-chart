@@ -32,9 +32,13 @@ spec:
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: 'nextcloud.local'
             - name: NEXTCLOUD_AUTOINSTALL_APPS
-              value: 'user_oidc oidc groupfolders'
+              value: 'integration_openproject user_oidc oidc groupfolders'
             - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
               value: '60'
+          {{ if .Values.nextcloud.integrationAppGitBranch }}
+            - name: INTEGRATION_APP_GIT_BRANCH
+              value: {{ .Values.nextcloud.integrationAppGitBranch }}
+          {{ end }}
           ports:
             - containerPort: 80
           volumeMounts:
@@ -48,10 +52,6 @@ spec:
               mountPath: /shared
             - name: ca-cert
               mountPath: /certs
-          {{ if .Values.nextcloud.localAppsDir }}
-            - name: local-ncapps
-              mountPath: /var/www/html/custom_apps
-          {{ end }}
 
       volumes:
         # - name: ncdata
@@ -74,9 +74,3 @@ spec:
               - key: {{ trimPrefix "scripts/nextcloud/" $path | replace "/" "_" }}
                 path: {{ trimPrefix "scripts/nextcloud/" $path }}
             {{ end }}
-      {{ if .Values.nextcloud.localAppsDir }}
-        - name: local-ncapps
-          hostPath:
-            path: {{ .Values.nextcloud.localAppsDir }}
-            type: Directory
-      {{ end }}
