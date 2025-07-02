@@ -6,6 +6,8 @@ set -e
 source ~/.bashrc
 WORKING_DIR=$(pwd)
 APP_DIR="apps/integration_openproject"
+
+occ a:d integration_openproject
 rm -rf $APP_DIR || true
 
 if [[ -n "$INTEGRATION_APP_GIT_BRANCH" ]]; then
