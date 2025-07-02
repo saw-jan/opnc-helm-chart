@@ -8,7 +8,7 @@ if [[ -n "$INTEGRATION_APP_GIT_BRANCH" ]]; then
     WORKING_DIR=$(pwd)
 
     echo "Using 'integration_openproject' app branch: ${INTEGRATION_APP_GIT_BRANCH}"
-    APP_DIR="custom_apps/integration_openproject"
+    APP_DIR="apps/integration_openproject"
     rm -rf $APP_DIR || true
     mkdir -p $APP_DIR
     git clone --single-branch \
@@ -21,3 +21,5 @@ if [[ -n "$INTEGRATION_APP_GIT_BRANCH" ]]; then
     cd "$WORKING_DIR"
     occ a:e integration_openproject
 fi
+
+occ upgrade

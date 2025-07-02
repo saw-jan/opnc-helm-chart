@@ -35,10 +35,6 @@ spec:
               value: 'true'
             - name: OPENPROJECT_AUTHENTICATION
               value: '{"global_basic_auth":{"user": "admin", "password": "admin"}}'
-          {{ if .Values.openproject.localSrcPath }}
-            - name: USE_CUSTOM_SOURCE
-              value: 'true'
-          {{ end }}
           {{ if .Values.openproject.gitSrcBranchName }}
             - name: GIT_SOURCE_BRANCH
               value: {{ .Values.openproject.gitSrcBranchName }}
@@ -46,18 +42,24 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
+            - name: opdata
+              mountPath: /var/openproject/assets
+            - name: opdb
+              mountPath: /var/openproject/pgdata
             - name: ca-cert
               mountPath: /certs
             - name: scripts
               mountPath: /scripts
             - name: tmp
               mountPath: /tmp
-          {{ if .Values.openproject.localSrcPath }}
-            - name: local-src
-              mountPath: /app
-          {{ end }}
 
       volumes:
+        - name: opdata
+          persistentVolumeClaim:
+            claimName: opdata-pvc
+        - name: opdb
+          persistentVolumeClaim:
+            claimName: opdb-pvc
         - name: tmp
           emptyDir: {}
         - name: ca-cert
@@ -67,9 +69,3 @@ spec:
           configMap:
             name: op-configmap
             defaultMode: 0755
-      {{ if .Values.openproject.localSrcPath }}
-        - name: local-src
-          hostPath:
-            path: {{ .Values.openproject.localSrcPath }}
-            type: Directory
-      {{ end }}

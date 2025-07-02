@@ -28,10 +28,10 @@ spec:
               value: keycloak
           ports:
             - containerPort: 5432
-      #     volumeMounts:
-      #       - name: kcdb
-      #         mountPath: /var/lib/postgresql/data
-      # volumes:
-      #   - name: kcdb
-      #     persistentVolumeClaim:
-      #       claimName: kcdb-pvc
+          volumeMounts:
+            - name: kcdb
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: kcdb
+          persistentVolumeClaim:
+            claimName: kcdb-pvc

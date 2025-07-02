@@ -26,7 +26,7 @@ spec:
             - name: VIRTUAL_HOST
               value: 'nextcloud.local'
             - name: SERVER_BRANCH
-              value: 'stable31'
+              value: {{ .Values.nextcloud.version | default "stable31" }}
             - name: NEXTCLOUD_AUTOINSTALL
               value: 'YES'
             - name: NEXTCLOUD_TRUSTED_DOMAINS
@@ -47,7 +47,7 @@ spec:
             - name: ncconfig
               mountPath: /var/www/html/config
             - name: ncapps
-              mountPath: /var/www/html/custom_apps
+              mountPath: /var/www/html/apps
             - name: tmp
               mountPath: /tmp
             - name: scripts

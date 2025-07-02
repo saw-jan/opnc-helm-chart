@@ -21,9 +21,6 @@ rsync -a --chmod=755 --chown=www-data:www-data /tmp/server/ $WEB_ROOT
 # fix permissions
 chown www-data: -R $WEB_ROOT/data
 chown www-data: $WEB_ROOT/.htaccess
-# create custom apps directory
-mkdir -p $WEB_ROOT/custom_apps
-chown www-data: -R $WEB_ROOT/custom_apps
 
 # patch bootstrap script
 # disable demo users creation

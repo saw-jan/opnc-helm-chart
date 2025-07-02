@@ -50,13 +50,13 @@ spec:
           volumeMounts:
             - name: realmconfig
               mountPath: /opt/keycloak/data/import
-      #       - name: kcdata
-      #         mountPath: /opt/keycloak/data
+            - name: kcdata
+              mountPath: /opt/keycloak/data
       volumes:
         - name: realmconfig
           configMap:
             name: realm-configmap
             defaultMode: 0755
-      #   - name: kcdata
-      #     persistentVolumeClaim:
-      #       claimName: kcdata-pvc
+        - name: kcdata
+          persistentVolumeClaim:
+            claimName: kcdata-pvc
