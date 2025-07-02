@@ -51,30 +51,37 @@
     sudo echo "$(minikube ip) openproject.local nextcloud.local keycloak.local" | sudo tee -a /etc/hosts
    ```
 
-### Using local source code
+### Using different versions
 
-In order to mount the local source code to the pods, we have to mount the local directory containing the required folders to the minikube first. And then we can reference that mounted directory in the pod specification.
+Currently, we can define the required versions for the following components:
 
-**NOTE:** The source code needs to be compiled/built beforehand. It's tricky to build the project inside the pod due to varios constraints like permissions and missing dependencies.
+```
+1. integration_openproject app
+2. OpenProject
+3. Nextcloud
+```
 
-1. Mount the local source code directory to minikube:
+Please refer to [values.yaml](values.yaml) for available configuration options.
 
-   ```bash
-   minikube mount /path/to/your/local/dir:/localDir
-   ```
+Use the following command to upgrade the release:
 
-2. Update the `values.yaml` file to reference the mounted directory:
+```bash
+helm upgrade opnc .
+```
 
-   ```yaml
-   openproject:
-     localSrcPath: /localDir/openproject
-   ```
+or (if you have separate `values.yaml` file):
 
-3. Redeploy the helm chart:
+```bash
+helm upgrade -f <path-to-values.yaml> opnc
+```
 
-   ```bash
-   helm upgrade --install opnc .
-   ```
+or (set the versions directly while running the command):
+
+```bash
+helm upgrade \
+   --set nextcloud.integrationAppVersion=2.9.1 \
+   opnc .
+```
 
 ### Useful Commands
 
