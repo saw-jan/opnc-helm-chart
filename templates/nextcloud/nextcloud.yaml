@@ -24,23 +24,23 @@ spec:
             - name: PROTOCOL
               value: 'https'
             - name: VIRTUAL_HOST
-              value: {{ .Values.nextcloudHost | default "nextcloud.local" }}
+              value: {{ include "opnc.nextcloudHost" . }}
             - name: SERVER_BRANCH
               value: {{ .Values.nextcloud.version | default "stable31" }}
             - name: NEXTCLOUD_AUTOINSTALL
               value: 'YES'
             - name: NEXTCLOUD_TRUSTED_DOMAINS
-              value: {{ .Values.nextcloudHost | default "nextcloud.local" }}
+              value: {{ include "opnc.nextcloudHost" . }}
             - name: NEXTCLOUD_AUTOINSTALL_APPS
               value: 'user_oidc oidc groupfolders'
             - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
               value: '60'
             - name: INTEGRATION_APP_SETUP_METHOD
-              value: {{ .Values.nextcloud.integrationAppSetupMethod | default "oauth2" }}
+              value: {{ .Values.nextcloud.integrationAppSetupMethod | default "sso-external" }}
             - name: OPENPROJECT_HOST
-              value: {{ .Values.openprojectHost | default "openproject.local" }}
+              value: {{ include "opnc.openprojectHost" . }}
             - name: KEYCLOAK_HOST
-              value: {{ .Values.keycloakHost | default "keycloak.local" }}
+              value: {{ include "opnc.keycloakHost" . }}
           {{ if .Values.nextcloud.integrationAppGitBranch }}
             - name: INTEGRATION_APP_GIT_BRANCH
               value: {{ .Values.nextcloud.integrationAppGitBranch }}
@@ -62,8 +62,7 @@ spec:
               mountPath: /tmp
             - name: scripts
               mountPath: /shared
-            - name: ca-cert
-              mountPath: /certs
+            {{ include "opnc.caCertVolumeMount" . }}
 
       volumes:
         - name: ncdata
@@ -77,9 +76,6 @@ spec:
             claimName: ncapps-pvc
         - name: tmp
           emptyDir: {}
-        - name: ca-cert
-          secret:
-            secretName: {{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
         - name: scripts
           configMap:
             name: scripts-configmap
@@ -89,3 +85,4 @@ spec:
               - key: {{ trimPrefix "scripts/nextcloud/" $path | replace "/" "_" }}
                 path: {{ trimPrefix "scripts/nextcloud/" $path }}
             {{ end }}
+        {{ include "opnc.caCertVolume" . }}

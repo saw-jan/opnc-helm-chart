@@ -22,27 +22,27 @@ spec:
             - name: OPENPROJECT_LOG__LEVEL
               value: error
             - name: OPENPROJECT_HOST__NAME
-              value: {{ .Values.openprojectHost | default "openproject.local" }}
+              value: {{ include "opnc.openprojectHost" . }}
             - name: OPENPROJECT_HTTPS
               value: 'true'
             - name: OPENPROJECT_DEV_EXTRA_HOSTS
-              value: {{ .Values.openprojectHost | default "openproject.local" }}
+              value: {{ include "opnc.openprojectHost" . }}
             - name: OPENPROJECT_EDITION
               value: standard
             - name: OPENPROJECT_APIV3__ENABLE__BASIC__AUTH
               value: 'true'
             - name: OPENPROJECT_SEED__ADMIN__USER__NAME
-              value: {{ .Values.openproject.adminUser | default "admin" }}
+              value: 'admin'
             - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD
-              value: {{ .Values.openproject.adminPassword | default "admin" }}
+              value: 'admin'
             - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET
               value: 'false'
             - name: OPENPROJECT_AUTHENTICATION
               value: >
                 {
                   "global_basic_auth": {
-                    "user": "{{ .Values.openproject.adminUser | default "admin" }}",
-                    "password": "{{ .Values.openproject.adminPassword | default "admin" }}"
+                    "user": "admin",
+                    "password": "admin"
                   }
                 }
           {{ if .Values.openproject.gitSrcBranchName }}
@@ -56,12 +56,11 @@ spec:
               mountPath: /var/openproject/assets
             - name: opdb
               mountPath: /var/openproject/pgdata
-            - name: ca-cert
-              mountPath: /certs
             - name: scripts
               mountPath: /scripts
             - name: tmp
               mountPath: /tmp
+            {{ include "opnc.caCertVolumeMount" . }}
 
       volumes:
         - name: opdata
@@ -72,10 +71,8 @@ spec:
             claimName: opdb-pvc
         - name: tmp
           emptyDir: {}
-        - name: ca-cert
-          secret:
-            secretName: {{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
         - name: scripts
           configMap:
             name: op-configmap
             defaultMode: 0755
+        {{ include "opnc.caCertVolume" . }}

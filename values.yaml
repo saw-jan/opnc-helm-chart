@@ -33,10 +33,11 @@ openproject:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   gitSrcBranchName: ''
-  # admin user name
-  adminUser: 'admin'
-  # admin user password
-  adminPassword: 'admin'
+
+keycloak:
+  # Keycloak version (docker image tag)
+  # E.g. 26.2, 26.2.4
+  version: ''
 
 ingress:
   # Ingress class name

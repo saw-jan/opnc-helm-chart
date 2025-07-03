@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: keycloak/keycloak:26.2
+          image: keycloak/keycloak:{{ .Values.keycloak.version | default "26.2" }}
           command:
             [
               '/opt/keycloak/bin/kc.sh',
@@ -42,7 +42,7 @@ spec:
             - name: KC_DB_SCHEMA
               value: public
             - name: KC_HOSTNAME
-              value: {{ .Values.keycloakHost | default "keycloak.local" }}
+              value: { { include "opnc.keycloakHost" . } }
             - name: KC_TRANSACTION_XA_ENABLED
               value: 'false'
           ports:
