@@ -24,17 +24,23 @@ spec:
             - name: PROTOCOL
               value: 'https'
             - name: VIRTUAL_HOST
-              value: 'nextcloud.local'
+              value: {{ .Values.nextcloudHost | default "nextcloud.local" }}
             - name: SERVER_BRANCH
               value: {{ .Values.nextcloud.version | default "stable31" }}
             - name: NEXTCLOUD_AUTOINSTALL
               value: 'YES'
             - name: NEXTCLOUD_TRUSTED_DOMAINS
-              value: 'nextcloud.local'
+              value: {{ .Values.nextcloudHost | default "nextcloud.local" }}
             - name: NEXTCLOUD_AUTOINSTALL_APPS
               value: 'user_oidc oidc groupfolders'
             - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
               value: '60'
+            - name: INTEGRATION_APP_SETUP_METHOD
+              value: {{ .Values.nextcloud.integrationAppSetupMethod | default "oauth2" }}
+            - name: OPENPROJECT_HOST
+              value: {{ .Values.openprojectHost | default "openproject.local" }}
+            - name: KEYCLOAK_HOST
+              value: {{ .Values.keycloakHost | default "keycloak.local" }}
           {{ if .Values.nextcloud.integrationAppGitBranch }}
             - name: INTEGRATION_APP_GIT_BRANCH
               value: {{ .Values.nextcloud.integrationAppGitBranch }}

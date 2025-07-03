@@ -1,3 +1,13 @@
+# Nextcloud server host name
+# Example: nextcloud.local
+nextcloudHost: 'nextcloud.local'
+# OpenProject server host name
+# Example: openproject.local
+openprojectHost: 'openproject.local'
+# Keycloak server host name
+# Example: keycloak.local
+keycloakHost: 'keycloak.local'
+
 nextcloud:
   # Nextcloud version git branch
   # E.g. stable31, stable30, master
@@ -10,6 +20,10 @@ nextcloud:
   # NOTE: 'integrationAppVersion' will be ignored if this is set
   # Example: release/2.9
   integrationAppGitBranch: ''
+  # Integration app setup method
+  # NOTE: This is only used if the integration is not already set up
+  # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+  integrationAppSetupMethod: 'sso-nextcloud'
 
 openproject:
   # OpenProject version (docker image tag)

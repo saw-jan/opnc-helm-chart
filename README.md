@@ -72,7 +72,7 @@ helm upgrade opnc .
 or (if you have separate `values.yaml` file):
 
 ```bash
-helm upgrade -f <path-to-values.yaml> opnc
+helm upgrade -f <path-to-values.yaml> <path-to-opnc-repo>
 ```
 
 or (set the versions directly while running the command):
