@@ -22,19 +22,29 @@ spec:
             - name: OPENPROJECT_LOG__LEVEL
               value: error
             - name: OPENPROJECT_HOST__NAME
-              value: openproject.local
+              value: {{ .Values.openprojectHost | default "openproject.local" }}
             - name: OPENPROJECT_HTTPS
               value: 'true'
             - name: OPENPROJECT_DEV_EXTRA_HOSTS
-              value: openproject.local
+              value: {{ .Values.openprojectHost | default "openproject.local" }}
             - name: OPENPROJECT_EDITION
               value: standard
-            - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET
-              value: 'false'
             - name: OPENPROJECT_APIV3__ENABLE__BASIC__AUTH
               value: 'true'
+            - name: OPENPROJECT_SEED__ADMIN__USER__NAME
+              value: {{ .Values.openproject.adminUser | default "admin" }}
+            - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD
+              value: {{ .Values.openproject.adminPassword | default "admin" }}
+            - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET
+              value: 'false'
             - name: OPENPROJECT_AUTHENTICATION
-              value: '{"global_basic_auth":{"user": "admin", "password": "admin"}}'
+              value: >
+                {
+                  "global_basic_auth": {
+                    "user": "{{ .Values.openproject.adminUser | default "admin" }}",
+                    "password": "{{ .Values.openproject.adminPassword | default "admin" }}"
+                  }
+                }
           {{ if .Values.openproject.gitSrcBranchName }}
             - name: GIT_SOURCE_BRANCH
               value: {{ .Values.openproject.gitSrcBranchName }}
@@ -64,7 +74,7 @@ spec:
           emptyDir: {}
         - name: ca-cert
           secret:
-            secretName: opnc-ca-secret
+            secretName: {{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
         - name: scripts
           configMap:
             name: op-configmap

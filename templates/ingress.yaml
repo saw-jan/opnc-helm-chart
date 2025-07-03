@@ -4,18 +4,18 @@ metadata:
   name: opnc-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/issuer: 'opnc-ca-issuer'
+    cert-manager.io/issuer: {{ .Values.ingress.issuerName | default "opnc-ca-issuer" }}
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.className | default "nginx" }}
   tls:
     - hosts:
-        - openproject.local
-        - nextcloud.local
-        - keycloak.local
-      secretName: opnc-tsl-secret
+        - {{ .Values.nextcloudHost | default "nextcloud.local" }}
+        - {{ .Values.openprojectHost | default "openproject.local" }}
+        - {{ .Values.keycloakHost | default "keycloak.local" }}
+      secretName: {{ .Values.ingress.tlsSecretName | default "opnc-tsl-secret" }}
   rules:
-    - host: openproject.local
+    - host: {{ .Values.openprojectHost | default "openproject.local" }}
       http:
         paths:
           - path: /
@@ -25,7 +25,7 @@ spec:
                 name: openproject
                 port:
                   number: 8080
-    - host: nextcloud.local
+    - host: {{ .Values.nextcloudHost | default "nextcloud.local" }}
       http:
         paths:
           - path: /
@@ -35,7 +35,7 @@ spec:
                 name: nextcloud
                 port:
                   number: 80
-    - host: keycloak.local
+    - host: {{ .Values.keycloakHost | default "keycloak.local" }}
       http:
         paths:
           - path: /

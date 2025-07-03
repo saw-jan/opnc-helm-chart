@@ -23,7 +23,7 @@ nextcloud:
   # Integration app setup method
   # NOTE: This is only used if the integration is not already set up
   # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
-  integrationAppSetupMethod: 'sso-nextcloud'
+  integrationAppSetupMethod: 'sso-external'
 
 openproject:
   # OpenProject version (docker image tag)
@@ -33,3 +33,17 @@ openproject:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   gitSrcBranchName: ''
+  # admin user name
+  adminUser: 'admin'
+  # admin user password
+  adminPassword: 'admin'
+
+ingress:
+  # Ingress class name
+  className: 'nginx'
+  # Issuer name for cert-manager
+  issuerName: 'opnc-ca-issuer'
+  # CA secret name
+  caSecretName: 'opnc-ca-secret'
+  # TLS secret name
+  tlsSecretName: 'opnc-tsl-secret'

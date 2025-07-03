@@ -79,7 +79,7 @@ spec:
           emptyDir: {}
         - name: ca-cert
           secret:
-            secretName: opnc-ca-secret
+            secretName: {{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
         - name: scripts
           configMap:
             name: scripts-configmap
