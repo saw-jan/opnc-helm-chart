@@ -31,8 +31,6 @@ spec:
               value: 'YES'
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: {{ include "opnc.nextcloudHost" . }}
-            - name: NEXTCLOUD_AUTOINSTALL_APPS
-              value: 'user_oidc oidc groupfolders'
             - name: NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME
               value: '60'
             - name: INTEGRATION_APP_SETUP_METHOD
@@ -49,6 +47,12 @@ spec:
             - name: INTEGRATION_APP_VERSION
               value: {{ .Values.nextcloud.integrationAppVersion }}
           {{ end }}
+            - name: NEXTCLOUD_ENABLE_APPS
+              # Space separated list of apps to enable
+              # Generated format: app1@2.4.1 app2@git=branch
+              value: {{ range $app := .Values.nextcloud.enableApps -}}
+                  {{ $app.name }}{{ if $app.gitBranch }}@git={{ $app.gitBranch }} {{ else }}{{ if $app.version }}@{{ $app.version }}{{ end }} {{ end }}
+                {{- end }}
           ports:
             - containerPort: 80
           volumeMounts:
