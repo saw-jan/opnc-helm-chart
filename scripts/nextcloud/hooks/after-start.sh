@@ -158,29 +158,6 @@ if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
 elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-nextcloud" ]]; then
     curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_oidc_setup.sh -o integration_oidc_setup.sh
 
-    NC_HOST=https://$VIRTUAL_HOST \
-        NC_ADMIN_USERNAME=admin \
-        NC_ADMIN_PASSWORD=admin \
-        NC_INTEGRATION_PROVIDER_TYPE=external \
-        NC_INTEGRATION_PROVIDER_NAME=Keycloak \
-        NC_INTEGRATION_OP_CLIENT_ID=openproject \
-        NC_INTEGRATION_TOKEN_EXCHANGE=true \
-        NC_INTEGRATION_ENABLE_NAVIGATION=false \
-        NC_INTEGRATION_ENABLE_SEARCH=false \
-        OP_HOST=https://$OPENPROJECT_HOST \
-        OP_ADMIN_USERNAME=admin \
-        OP_ADMIN_PASSWORD=admin \
-        OP_STORAGE_NAME=nextcloud \
-        OP_STORAGE_AUDIENCE=nextcloud \
-        bash integration_oidc_setup.sh
-
-elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
-    echo "[INFO] Waiting for Keycloak to be ready..."
-    wait_for_server "https://$KEYCLOAK_HOST"
-    echo "[INFO] Keycloak is ready."
-
-    curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_oidc_setup.sh -o integration_oidc_setup.sh
-
     NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
@@ -192,5 +169,28 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
         OP_STORAGE_NAME=nextcloud \
         OP_HOST=https://$OPENPROJECT_HOST \
         OP_USE_LOGIN_TOKEN=true \
+        bash integration_oidc_setup.sh
+
+elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
+    echo "[INFO] Waiting for Keycloak to be ready..."
+    wait_for_server "https://$KEYCLOAK_HOST"
+    echo "[INFO] Keycloak is ready."
+
+    curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_oidc_setup.sh -o integration_oidc_setup.sh
+
+    NC_HOST=https://$VIRTUAL_HOST \
+        NC_ADMIN_USERNAME=admin \
+        NC_ADMIN_PASSWORD=admin \
+        NC_INTEGRATION_PROVIDER_TYPE=external \
+        NC_INTEGRATION_PROVIDER_NAME=$OIDC_KEYCLOAK_PROVIDER_NAME \
+        NC_INTEGRATION_OP_CLIENT_ID=$OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID \
+        NC_INTEGRATION_TOKEN_EXCHANGE=true \
+        NC_INTEGRATION_ENABLE_NAVIGATION=false \
+        NC_INTEGRATION_ENABLE_SEARCH=false \
+        OP_HOST=https://$OPENPROJECT_HOST \
+        OP_ADMIN_USERNAME=admin \
+        OP_ADMIN_PASSWORD=admin \
+        OP_STORAGE_NAME=nextcloud \
+        OP_STORAGE_AUDIENCE=nextcloud \
         bash integration_oidc_setup.sh
 fi

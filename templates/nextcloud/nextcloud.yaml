@@ -53,6 +53,17 @@ spec:
               value: {{ range $app := .Values.nextcloud.enableApps -}}
                   {{ $app.name }}{{ if $app.gitBranch }}@git={{ $app.gitBranch }} {{ else }}{{ if $app.version }}@{{ $app.version }}{{ end }} {{ end }}
                 {{- end }}
+            # OIDC provider (Keycloak)
+            - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
+              value: {{ include "opnc.idp.nextcloudClientId" . }}
+            - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET
+              value: {{ include "opnc.idp.nextcloudClientSecret" . }}
+            - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
+              value: {{ include "opnc.idp.openprojectClientId" . }}
+            - name: OIDC_KEYCLOAK_PROVIDER_NAME
+              value: keycloak
+            - name: OIDC_KEYCLOAK_DISCOVERY_URL
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/.well-known/openid-configuration
           ports:
             - containerPort: 80
           volumeMounts:
