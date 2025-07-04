@@ -37,14 +37,29 @@ spec:
               value: 'admin'
             - name: OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET
               value: 'false'
-            - name: OPENPROJECT_AUTHENTICATION
-              value: >
-                {
-                  "global_basic_auth": {
-                    "user": "admin",
-                    "password": "admin"
-                  }
-                }
+            - name: OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER
+              value: 'admin'
+            - name: OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD
+              value: 'admin'
+
+            # OIDC provider
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_DISPLAY__NAME
+              value: 'Keycloak'
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_IDENTIFIER
+              value: {{ include "opnc.idp.openprojectClientId" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_SECRET
+              value: {{ include "opnc.idp.openprojectClientSecret" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_AUTHORIZATION__ENDPOINT
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/auth
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_TOKEN__ENDPOINT
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/token
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_USERINFO__ENDPOINT
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/userinfo
+            - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI
+              value: https://{{ include "opnc.openprojectHost" . }}/
+
           {{ if .Values.openproject.gitSrcBranchName }}
             - name: GIT_SOURCE_BRANCH
               value: {{ .Values.openproject.gitSrcBranchName }}

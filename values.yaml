@@ -56,6 +56,14 @@ keycloak:
   # Keycloak version (docker image tag)
   # E.g. 26.2, 26.2.4
   version: ''
+  realmName: 'opnc'
+  clients:
+    nextcloud:
+      id: 'nextcloud'
+      secret: 'RGF6WCCOzm2bmnqgRelaIA5fp3XaMTIH'
+    openproject:
+      id: 'openproject'
+      secret: 'EeTlw571C3PDtWyqlObrDOLdapOO570h'
 
 ingress:
   # Ingress class name
