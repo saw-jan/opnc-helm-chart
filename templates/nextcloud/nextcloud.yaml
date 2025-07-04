@@ -62,7 +62,7 @@ spec:
               mountPath: /tmp
             - name: scripts
               mountPath: /shared
-            {{ include "opnc.caCertVolumeMount" . }}
+            {{- include "opnc.caCertVolumeMount" . | indent 12 }}
 
       volumes:
         - name: ncdata
@@ -81,8 +81,8 @@ spec:
             name: scripts-configmap
             defaultMode: 0755
             items:
-            {{ range $path, $_ := .Files.Glob "scripts/nextcloud/**" }}
+            {{- range $path, $_ := .Files.Glob "scripts/nextcloud/**" }}
               - key: {{ trimPrefix "scripts/nextcloud/" $path | replace "/" "_" }}
                 path: {{ trimPrefix "scripts/nextcloud/" $path }}
-            {{ end }}
-        {{ include "opnc.caCertVolume" . }}
+            {{- end -}}
+        {{- include "opnc.caCertVolume" . | indent 8 }}

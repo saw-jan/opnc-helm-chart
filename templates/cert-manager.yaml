@@ -27,7 +27,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "opnc.ingressIssuerName" . }}
+  name: {{ include "opnc.issuerName" . }}
 spec:
   ca:
     secretName: {{ include "opnc.caSecretName" . }}
@@ -44,5 +44,5 @@ spec:
     - {{ include "opnc.nextcloudHost" . }}
     - {{ include "opnc.keycloakHost" . }}
   issuerRef:
-    name: {{ include "opnc.ingressIssuerName" . }}
+    name: {{ include "opnc.issuerName" . }}
     kind: Issuer

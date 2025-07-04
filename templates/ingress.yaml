@@ -4,7 +4,7 @@ metadata:
   name: opnc-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/issuer: {{ include "opnc.ingressIssuerName" . }}
+    cert-manager.io/issuer: {{ include "opnc.issuerName" . }}
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
   ingressClassName: {{ .Values.ingress.className | default "nginx" }}

@@ -4,17 +4,17 @@ Host name of the servers used in the stack.
 ---------------------------------------------
 */}}
 
-{{ define "opnc.openprojectHost" }}
+{{- define "opnc.openprojectHost" -}}
 {{ .Values.openprojectHost | default "openproject.local" }}
-{{ end }}
+{{- end -}}
 
-{{ define "opnc.nextcloudHost" }}
+{{- define "opnc.nextcloudHost" -}}
 {{ .Values.nextcloudHost | default "nextcloud.local" }}
-{{ end }}
+{{- end -}}
 
-{{ define "opnc.keycloakHost" }}
+{{- define "opnc.keycloakHost" -}}
 {{ .Values.keycloakHost | default "keycloak.local" }}
-{{ end }}
+{{- end -}}
 
 {{/*
 ---------------------------------------------
@@ -22,14 +22,14 @@ Variables for cert-manager and TLS secrets.
 ---------------------------------------------
 */}}
 
-{{ define "opnc.issuerName" }}
+{{- define "opnc.issuerName" -}}
 {{ .Values.ingress.issuerName | default "opnc-ca-issuer" }}
-{{ end }}
+{{- end -}}
 
-{{ define "opnc.caSecretName" }}
+{{- define "opnc.caSecretName" -}}
 {{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
-{{ end }}
+{{- end -}}
 
-{{ define "opnc.tlsSecretName" }}
+{{- define "opnc.tlsSecretName" -}}
 {{ .Values.ingress.tlsSecretName | default "opnc-tsl-secret" }}
-{{ end }}
+{{- end -}}

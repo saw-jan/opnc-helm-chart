@@ -60,7 +60,7 @@ spec:
               mountPath: /scripts
             - name: tmp
               mountPath: /tmp
-            {{ include "opnc.caCertVolumeMount" . }}
+            {{- include "opnc.caCertVolumeMount" . | indent 12 }}
 
       volumes:
         - name: opdata
@@ -75,4 +75,4 @@ spec:
           configMap:
             name: op-configmap
             defaultMode: 0755
-        {{ include "opnc.caCertVolume" . }}
+        {{- include "opnc.caCertVolume" . | indent 8 }}
