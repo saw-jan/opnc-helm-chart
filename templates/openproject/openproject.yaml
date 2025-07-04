@@ -43,6 +43,7 @@ spec:
               value: 'admin'
 
             # OIDC provider
+            {{ if eq .Values.openproject.oidcProvider "keycloak" }}
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_DISPLAY__NAME
               value: 'Keycloak'
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_IDENTIFIER
@@ -59,6 +60,25 @@ spec:
               value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/userinfo
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI
               value: https://{{ include "opnc.openprojectHost" . }}/
+            {{ end }}
+            {{ if eq .Values.openproject.oidcProvider "nextcloud" }}
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_DISPLAY__NAME
+              value: 'Nextcloud'
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_IDENTIFIER
+              value: {{ include "opnc.idp.nextcloudClientId" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_SECRET
+              value: {{ include "opnc.idp.nextcloudClientSecret" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_ISSUER
+              value: https://{{ include "opnc.nextcloudHost" . }}
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_AUTHORIZATION__ENDPOINT
+              value: https://{{ include "opnc.nextcloudHost" . }}/index.php/apps/oidc/authorize
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_TOKEN__ENDPOINT
+              value: https://{{ include "opnc.nextcloudHost" . }}/index.php/apps/oidc/token
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_USERINFO__ENDPOINT
+              value: https://{{ include "opnc.nextcloudHost" . }}/index.php/apps/oidc/userinfo
+            - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_POST__LOGOUT__REDIRECT__URI
+              value: https://{{ include "opnc.openprojectHost" . }}/
+            {{ end }}
 
           {{ if .Values.openproject.gitSrcBranchName }}
             - name: GIT_SOURCE_BRANCH

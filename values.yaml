@@ -51,6 +51,8 @@ openproject:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   gitSrcBranchName: ''
+  # Options: 'nextcloud' or 'keycloak'
+  oidcProvider: 'keycloak'
 
 keycloak:
   # Keycloak version (docker image tag)
