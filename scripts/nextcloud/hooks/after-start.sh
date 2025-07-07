@@ -108,7 +108,8 @@ wait_for_server() {
     local retry=1
 
     while [[ $retry -le $max_retry ]]; do
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$url") -lt 400 ]]; then
+        server_status=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+        if [[ $server_status -ne 000 && $server_status -lt 400 ]]; then
             return 0
         fi
         echo "[INFO] Waiting for '$url' to be ready... (Retry $retry/$max_retry)"

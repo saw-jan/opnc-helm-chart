@@ -91,7 +91,7 @@ spec:
               mountPath: /var/openproject/assets
             - name: opdb
               mountPath: /var/openproject/pgdata
-            - name: scripts
+            - name: entrypoint
               mountPath: /scripts
             - name: tmp
               mountPath: /tmp
@@ -106,7 +106,7 @@ spec:
             claimName: opdb-pvc
         - name: tmp
           emptyDir: {}
-        - name: scripts
+        - name: entrypoint
           configMap:
             name: op-configmap
             defaultMode: 0755
