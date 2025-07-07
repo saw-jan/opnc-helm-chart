@@ -12,18 +12,10 @@ nextcloud:
   # Nextcloud version git branch
   # E.g. stable31, stable30, master
   version: ''
-  # Integration app version
-  # NOTE: Provide the full semantic version
-  # Example: 2.9.1
-  integrationAppVersion: ''
-  # Git branch to use as the source for the integration app
-  # NOTE: 'integrationAppVersion' will be ignored if this is set
-  # Example: release/2.9
-  integrationAppGitBranch: ''
   # Integration app setup method
   # NOTE: This is only used if the integration is not already set up
   # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
-  integrationAppSetupMethod: 'oauth2'
+  integrationAppSetupMethod: 'sso-external'
   enableApps:
     # Add the folloing entry for each app you want to enable
     #   - name: 'app_name'   # Name of the app

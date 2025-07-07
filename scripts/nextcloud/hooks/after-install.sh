@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 occ security:certificates:import /etc/ssl/certs/ca-certificates.crt
 # setup user_oidc app

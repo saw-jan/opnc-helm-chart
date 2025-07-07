@@ -39,14 +39,6 @@ spec:
               value: {{ include "opnc.openprojectHost" . }}
             - name: KEYCLOAK_HOST
               value: {{ include "opnc.keycloakHost" . }}
-          {{ if .Values.nextcloud.integrationAppGitBranch }}
-            - name: INTEGRATION_APP_GIT_BRANCH
-              value: {{ .Values.nextcloud.integrationAppGitBranch }}
-          {{ end }}
-          {{ if .Values.nextcloud.integrationAppVersion }}
-            - name: INTEGRATION_APP_VERSION
-              value: {{ .Values.nextcloud.integrationAppVersion }}
-          {{ end }}
             - name: NEXTCLOUD_ENABLE_APPS
               # Space separated list of apps to enable
               # Generated format: app1@2.4.1 app2@git=branch

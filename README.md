@@ -79,7 +79,7 @@ or (set the versions directly while running the command):
 
 ```bash
 helm upgrade \
-   --set nextcloud.integrationAppVersion=2.9.1 \
+   --set openproject.version=16 \
    opnc .
 ```
 
