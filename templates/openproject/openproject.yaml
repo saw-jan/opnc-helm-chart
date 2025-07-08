@@ -47,17 +47,17 @@ spec:
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_DISPLAY__NAME
               value: 'Keycloak'
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_IDENTIFIER
-              value: {{ include "opnc.idp.openprojectClientId" . }}
+              value: {{ include "opnc.oidc.openprojectClientId" . }}
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_SECRET
-              value: {{ include "opnc.idp.openprojectClientSecret" . }}
+              value: {{ include "opnc.oidc.openprojectClientSecret" . }}
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER
-              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.oidc.realmName" . }}
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_AUTHORIZATION__ENDPOINT
-              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/auth
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.oidc.realmName" . }}/protocol/openid-connect/auth
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_TOKEN__ENDPOINT
-              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/token
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.oidc.realmName" . }}/protocol/openid-connect/token
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_USERINFO__ENDPOINT
-              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/protocol/openid-connect/userinfo
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.oidc.realmName" . }}/protocol/openid-connect/userinfo
             - name: OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI
               value: https://{{ include "opnc.openprojectHost" . }}/
             {{ end }}
@@ -65,9 +65,9 @@ spec:
             - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_DISPLAY__NAME
               value: 'Nextcloud'
             - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_IDENTIFIER
-              value: {{ include "opnc.idp.nextcloudClientId" . }}
+              value: {{ include "opnc.oidc.nextcloudClientId" . }}
             - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_SECRET
-              value: {{ include "opnc.idp.nextcloudClientSecret" . }}
+              value: {{ include "opnc.oidc.nextcloudClientSecret" . }}
             - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_ISSUER
               value: https://{{ include "opnc.nextcloudHost" . }}
             - name: OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_AUTHORIZATION__ENDPOINT

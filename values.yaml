@@ -47,17 +47,50 @@ openproject:
   oidcProvider: 'keycloak'
 
 keycloak:
-  # Keycloak version (docker image tag)
-  # E.g. 26.2, 26.2.4
-  version: ''
+  image:
+    tag: '26.2.5'
+  command: ['/scripts/entrypoint.sh']
+  usePasswordFiles: false
+  auth:
+    adminUser: 'admin'
+    adminPassword: 'admin'
+  extraEnvVars:
+    - name: KEYCLOAK_HOSTNAME
+      value: keycloak.local
+    - name: KC_REALM_NAME
+      value: opnc
+    - name: KC_NEXTCLOUD_CLIENT_ID
+      value: nextcloud
+    - name: KC_NEXTCLOUD_CLIENT_SECRET
+      value: nextcloud-secret
+    - name: KC_NEXTCLOUD_CLIENT_HOST
+      value: nextcloud.local
+    - name: KC_OPENPROJECT_CLIENT_ID
+      value: openproject
+    - name: KC_OPENPROJECT_CLIENT_SECRET
+      value: openproject-secret
+    - name: KC_OPENPROJECT_CLIENT_HOST
+      value: openproject.local
+  extraVolumes:
+    - name: entrypoint
+      configMap:
+        name: kc-entry-configmap
+        defaultMode: 0755
+  extraVolumeMounts:
+    - name: entrypoint
+      mountPath: /scripts
+  cache:
+    enabled: false
+
+oidc:
   realmName: 'opnc'
   clients:
     nextcloud:
       id: 'nextcloud'
-      secret: 'RGF6WCCOzm2bmnqgRelaIA5fp3XaMTIH'
+      secret: 'nextcloud-secret'
     openproject:
       id: 'openproject'
-      secret: 'EeTlw571C3PDtWyqlObrDOLdapOO570h'
+      secret: 'openproject-secret'
 
 ingress:
   # Ingress class name
