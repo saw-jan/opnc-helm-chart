@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: opdb-pvc
+  name: kcdb-pvc
 spec:
   resources:
     requests:
