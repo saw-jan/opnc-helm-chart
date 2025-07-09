@@ -2,8 +2,11 @@
 
 set -eo pipefail
 
-CURL="/shared/bin/curl"
-JQ="/shared/bin/jq"
+CURL=$(which curl)
+if [ -z "$CURL" ]; then
+    echo "[ERROR] curl: command not found"
+    exit 1
+fi
 
 KC_URL="http://localhost:8080"
 
@@ -14,7 +17,7 @@ APIV3_SCOPE_ID=83625306-1925-4069-a77b-d8d9d2ec520b
 ###################################
 # Start Keycloak                  #
 ###################################
-/opt/keycloak/bin/kc.sh start-dev --proxy-headers xforwarded \
+/opt/bitnami/keycloak/bin/kc.sh start-dev --proxy-headers xforwarded \
     --spi-connections-http-client-default-disable-trust-manager=true &
 KC_PID=$!
 
@@ -50,7 +53,7 @@ TOKEN=$($CURL -s -XPOST "$KC_URL/realms/master/protocol/openid-connect/token" \
     -d "client_id=admin-cli" \
     -d "username=$KC_BOOTSTRAP_ADMIN_USERNAME" \
     -d "password=$KC_BOOTSTRAP_ADMIN_PASSWORD" \
-    -d "grant_type=password" | $JQ -r .access_token)
+    -d "grant_type=password" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
 
 if [ -z "$TOKEN" ]; then
     echo "[ERROR] Failed to obtain access token"

@@ -47,15 +47,15 @@ spec:
                 {{- end }}
             # OIDC provider (Keycloak)
             - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
-              value: {{ include "opnc.idp.nextcloudClientId" . }}
+              value: {{ include "opnc.oidc.nextcloudClientId" . }}
             - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET
-              value: {{ include "opnc.idp.nextcloudClientSecret" . }}
+              value: {{ include "opnc.oidc.nextcloudClientSecret" . }}
             - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
-              value: {{ include "opnc.idp.openprojectClientId" . }}
+              value: {{ include "opnc.oidc.openprojectClientId" . }}
             - name: OIDC_KEYCLOAK_PROVIDER_NAME
               value: keycloak
             - name: OIDC_KEYCLOAK_DISCOVERY_URL
-              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.idp.realmName" . }}/.well-known/openid-configuration
+              value: https://{{ include "opnc.keycloakHost" . }}/realms/{{ include "opnc.oidc.realmName" . }}/.well-known/openid-configuration
           ports:
             - containerPort: 80
           volumeMounts:

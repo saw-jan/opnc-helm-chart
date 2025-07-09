@@ -11,3 +11,7 @@ home: https://github.com/saw-jan/helm-opnc
 maintainers:
   - name: saw-jan
     url: https://github.com/saw-jan
+dependencies:
+  - name: keycloak
+    version: ~24.7.5
+    repository: oci://registry-1.docker.io/bitnamicharts

@@ -40,26 +40,26 @@ OpenID Connect variables.
 ---------------------------------------------
 */}}
 
-{{- define "opnc.idp.providerName" -}}
+{{- define "opnc.oidc.providerName" -}}
 {{ .Values.openproject.oidcProvider | default "keycloak" }}
 {{- end -}}
 
-{{- define "opnc.idp.realmName" -}}
-{{ .Values.keycloak.realmName | default "opnc" }}
+{{- define "opnc.oidc.realmName" -}}
+{{ .Values.oidc.realmName | default "opnc" }}
 {{- end -}}
 
-{{- define "opnc.idp.nextcloudClientId" -}}
-{{ .Values.keycloak.clients.nextcloud.id | default "nextcloud" }}
+{{- define "opnc.oidc.nextcloudClientId" -}}
+{{ .Values.oidc.clients.nextcloud.id | default "nextcloud" }}
 {{- end -}}
 
-{{- define "opnc.idp.nextcloudClientSecret" -}}
-{{ .Values.keycloak.clients.nextcloud.secret | default "nextcloud-secret" }}
+{{- define "opnc.oidc.nextcloudClientSecret" -}}
+{{ .Values.oidc.clients.nextcloud.secret | default "nextcloud-secret" }}
 {{- end -}}
 
-{{- define "opnc.idp.openprojectClientId" -}}
-{{ .Values.keycloak.clients.openproject.id | default "openproject" }}
+{{- define "opnc.oidc.openprojectClientId" -}}
+{{ .Values.oidc.clients.openproject.id | default "openproject" }}
 {{- end -}}
 
-{{- define "opnc.idp.openprojectClientSecret" -}}
-{{ .Values.keycloak.clients.openproject.secret | default "openproject-secret" }}
+{{- define "opnc.oidc.openprojectClientSecret" -}}
+{{ .Values.oidc.clients.openproject.secret | default "openproject-secret" }}
 {{- end -}}
