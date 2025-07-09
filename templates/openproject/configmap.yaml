@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: op-configmap
+  name: op-entry-configmap
 data:
-  openproject.sh: |
+  entrypoint.sh: |
 {{ .Files.Get "scripts/openproject.sh" | indent 4 }}}}

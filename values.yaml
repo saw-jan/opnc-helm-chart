@@ -36,15 +36,51 @@ nextcloud:
       gitBranch: ''
 
 openproject:
-  # OpenProject version (docker image tag)
-  # E.g. 16, 15.1, dev
-  version: ''
-  # Git branch to use as the source
-  # NOTE: 'version' will be ignored if this is set
-  # Example: dev
-  gitSrcBranchName: ''
-  # Options: 'nextcloud' or 'keycloak'
-  oidcProvider: 'keycloak'
+  fullnameOverride: 'openproject'
+  image:
+    # OpenProject version (docker image tag)
+    tag: '16.1'
+  openproject:
+    https: true
+    host: openproject.local
+    admin_user:
+      password_reset: 'false'
+    oidc:
+      enabled: true
+      displayName: 'Keycloak'
+      identifier: 'openproject'
+      secret: 'openproject-secret'
+      authorizationEndpoint: '/realms/opnc/protocol/openid-connect/auth'
+      tokenEndpoint: '/realms/opnc/protocol/openid-connect/token'
+      userinfoEndpoint: '/realms/opnc/protocol/openid-connect/userinfo'
+      host: 'keycloak.local'
+  environment:
+    OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'
+    OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
+    OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
+    OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://keycloak.local/realms/opnc
+    OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://openproject.local/
+    OPENPROJECT_DB_PASSWORD: 'openproject'
+    # Git branch to use as the source
+    # NOTE: 'version' will be ignored if this is set
+    # Example: dev
+    OP_GIT_SOURCE_BRANCH: ''
+  extraVolumes:
+    - name: entrypoint
+      configMap:
+        name: op-entry-configmap
+        defaultMode: 0755
+  extraVolumeMounts:
+    - name: entrypoint
+      mountPath: /scripts
+  postgresql:
+    fullnameOverride: 'op-postgresql'
+    auth:
+      password: 'openproject'
+      usePasswordFiles: false
+    primary:
+      podLabels:
+        app.kubernetes.io/name: 'op-postgresql'
 
 keycloak:
   fullnameOverride: 'keycloak'
@@ -85,6 +121,11 @@ keycloak:
       mountPath: /scripts
   cache:
     enabled: false
+  postgresql:
+    fullnameOverride: 'kc-postgresql'
+    primary:
+      podLabels:
+        app.kubernetes.io/name: 'kc-postgresql'
 
 oidc:
   realmName: 'opnc'
