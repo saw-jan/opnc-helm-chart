@@ -22,4 +22,4 @@ if [[ -n "$OP_GIT_SOURCE_BRANCH" ]]; then
     ln -s "$APP_PATH"/docker/prod/setup/.irbrc /home/"$APP_USER"/
 fi
 
-./docker/prod/entrypoint.sh ./docker/prod/supervisord
+./docker/prod/entrypoint.sh ./docker/prod/web

@@ -37,8 +37,10 @@ nextcloud:
 
 openproject:
   fullnameOverride: 'openproject'
+  # See https://github.com/opf/helm-charts/issues/201#issuecomment-2908788062
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
   image:
-    # OpenProject version (docker image tag)
     tag: '16.1'
   openproject:
     https: true
@@ -55,16 +57,29 @@ openproject:
       userinfoEndpoint: '/realms/opnc/protocol/openid-connect/userinfo'
       host: 'keycloak.local'
   environment:
+    OPENPROJECT_DEV_EXTRA_HOSTS: 'openproject.local'
     OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'
     OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
     OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
     OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://keycloak.local/realms/opnc
     OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://openproject.local/
-    OPENPROJECT_DB_PASSWORD: 'openproject'
+    DATABASE_HOST: 'op-postgresql'
     # Git branch to use as the source
     # NOTE: 'version' will be ignored if this is set
     # Example: dev
     OP_GIT_SOURCE_BRANCH: ''
+  dbInit:
+    resources:
+      limits:
+        memory: '1Gi'
+      requests:
+        memory: '512Mi'
+  appInit:
+    resources:
+      limits:
+        memory: '1Gi'
+      requests:
+        memory: '512Mi'
   extraVolumes:
     - name: entrypoint
       configMap:
@@ -75,9 +90,8 @@ openproject:
       mountPath: /scripts
   postgresql:
     fullnameOverride: 'op-postgresql'
-    auth:
-      password: 'openproject'
-      usePasswordFiles: false
+    image:
+      tag: '17.5.0-debian-12-r16'
     primary:
       podLabels:
         app.kubernetes.io/name: 'op-postgresql'
