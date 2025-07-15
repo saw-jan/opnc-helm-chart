@@ -13,6 +13,7 @@ KC_URL="http://localhost:8080"
 NC_CLIENT_DB_ID=d97b00f4-c4eb-41f0-ad9e-0c6674d13348
 OP_CLIENT_DB_ID=2a721a37-e840-49d1-8715-ab36cfc56dcf
 APIV3_SCOPE_ID=83625306-1925-4069-a77b-d8d9d2ec520b
+NC_AUD_SCOPE_ID=7107eebd-c2ef-4a8f-aa3c-f8112a243b9f
 
 ###################################
 # Start Keycloak                  #
@@ -20,6 +21,12 @@ APIV3_SCOPE_ID=83625306-1925-4069-a77b-d8d9d2ec520b
 /opt/bitnami/keycloak/bin/kc.sh start-dev --proxy-headers xforwarded \
     --spi-connections-http-client-default-disable-trust-manager=true &
 KC_PID=$!
+# wait to ensure the process has started
+sleep 1
+if [[ ! -d "/proc/$KC_PID" ]]; then
+    echo "[ERROR] Failed to start Keycloak"
+    exit 1
+fi
 
 # wait for Keycloak to start
 max_retry=60
@@ -47,20 +54,6 @@ fi
 # Setup realm, users and clients  #
 ###################################
 
-# get access token for Keycloak admin
-TOKEN=$($CURL -s -XPOST "$KC_URL/realms/master/protocol/openid-connect/token" \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -d "client_id=admin-cli" \
-    -d "username=$KC_BOOTSTRAP_ADMIN_USERNAME" \
-    -d "password=$KC_BOOTSTRAP_ADMIN_PASSWORD" \
-    -d "grant_type=password" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
-
-if [ -z "$TOKEN" ]; then
-    echo "[ERROR] Failed to obtain access token"
-    exit 1
-fi
-
-# create realm with users and clients
 COMMON_USER_ATTRIBUTES='
 "emailVerified": true,
 "enabled": true,
@@ -81,6 +74,20 @@ COMMON_CLIENT_ATTRIBUTES='
     "standard.token.exchange.enabled" : "true"
 }'
 
+# get access token for Keycloak admin
+TOKEN=$($CURL -s -XPOST "$KC_URL/realms/master/protocol/openid-connect/token" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "client_id=admin-cli" \
+    -d "username=$KC_BOOTSTRAP_ADMIN_USERNAME" \
+    -d "password=$KC_BOOTSTRAP_ADMIN_PASSWORD" \
+    -d "grant_type=password" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+if [ -z "$TOKEN" ]; then
+    echo "[ERROR] Failed to obtain access token"
+    exit 1
+fi
+
+# create realm with users and clients
 realm_status=$(
     $CURL -XPOST "$KC_URL/admin/realms" -s -o /dev/null -w "%{http_code}" \
         -H "Authorization: Bearer $TOKEN" \
@@ -132,64 +139,70 @@ else
     echo "[INFO] Realm '$KC_REALM_NAME' created successfully"
 fi
 
-# create client scope: api_v3
-add_scope_status=$(
-    $CURL -XPOST "$KC_URL/admin/realms/$KC_REALM_NAME/client-scopes" \
-        -s -o /dev/null -w "%{http_code}" \
-        -H "Authorization: Bearer $TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{
-        "id":"'"$APIV3_SCOPE_ID"'",
-        "name":"api_v3",
-        "protocol":"openid-connect",
-        "attributes": {"include.in.token.scope":"true"},
-        "protocolMappers": [
-            {
-                "name": "nc_aud_mapper",
-                "protocol": "openid-connect",
-                "protocolMapper": "oidc-audience-mapper",
-                "config": {
-                    "included.client.audience": "'"$KC_NEXTCLOUD_CLIENT_ID"'",
-                    "access.token.claim": "true"
-                }
-            },
-            {
-                "name": "op_aud_mapper",
-                "protocol": "openid-connect",
-                "protocolMapper": "oidc-audience-mapper",
-                "config": {
-                    "included.client.audience": "'"$KC_OPENPROJECT_CLIENT_ID"'",
-                    "access.token.claim": "true"
-                }
-            }
-        ]
-    }'
-)
+function add_client_scope() {
+    local response_status
+    local scope_name="$1"
+    local scope_id="$2"
+    local client_id="$3"
 
-if [[ "$add_scope_status" -ne 201 && "$add_scope_status" -ne 409 ]]; then
-    echo "[ERROR] Failed to create client scope 'api_v3', status code: $add_scope_status"
-    exit 1
-elif [[ "$add_scope_status" -ne 409 ]]; then
-    echo "[INFO] Client scope 'api_v3' exists, skipping creation..."
-else
-    echo "[INFO] Client scope 'api_v3' created successfully"
-fi
+    response_status=$(
+        $CURL -XPOST "$KC_URL/admin/realms/$KC_REALM_NAME/client-scopes" \
+            -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "id":"'"$scope_id"'",
+                "name":"'"$scope_name"'",
+                "protocol":"openid-connect",
+                "attributes": {"include.in.token.scope":"true"},
+                "protocolMappers": [
+                    {
+                        "name": "'"$client_id"'_aud_mapper",
+                        "protocol": "openid-connect",
+                        "protocolMapper": "oidc-audience-mapper",
+                        "config": {
+                            "included.client.audience": "'"$client_id"'",
+                            "access.token.claim": "true"
+                        }
+                    }
+                ]
+            }'
+    )
 
-# add api_v3 scope to the clients
-for client_id in "$NC_CLIENT_DB_ID" "$OP_CLIENT_DB_ID"; do
-    client_scope_status=$(
-        $CURL -XPUT "$KC_URL/admin/realms/$KC_REALM_NAME/clients/$client_id/optional-client-scopes/$APIV3_SCOPE_ID" \
+    if [[ "$response_status" -ne 201 && "$response_status" -ne 409 ]]; then
+        echo "[ERROR] Failed to create client scope '$scope_name', status code: $response_status"
+        exit 1
+    elif [[ "$response_status" -ne 409 ]]; then
+        echo "[INFO] Client scope '$scope_name' exists, skipping creation..."
+    else
+        echo "[INFO] Client scope '$scope_name' created successfully"
+    fi
+
+}
+
+function add_scope_to_client() {
+    local response_status
+    local client_id="$1" # client database ID (not a client identifier)
+    local scope_id="$2"
+
+    response_status=$(
+        $CURL -XPUT "$KC_URL/admin/realms/$KC_REALM_NAME/clients/$client_id/optional-client-scopes/$scope_id" \
             -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: Bearer $TOKEN"
     )
 
-    if [ "$client_scope_status" -ne 204 ]; then
-        echo "[ERROR] Failed to add scope 'api_v3' to client '$client_id', status code: $client_scope_status"
+    if [ "$response_status" -ne 204 ]; then
+        echo "[ERROR] Failed to add scope '$scope_id' to client '$client_id', status code: $response_status"
         exit 1
     else
-        echo "[INFO] Scope 'api_v3' added to client '$client_id' successfully"
+        echo "[INFO] Scope '$scope_id' added to client '$client_id' successfully"
     fi
-done
+}
+
+add_client_scope "api_v3" "$APIV3_SCOPE_ID" "$KC_OPENPROJECT_CLIENT_ID"
+add_client_scope "add-nc-aud" "$NC_AUD_SCOPE_ID" "$KC_NEXTCLOUD_CLIENT_ID"
+add_scope_to_client "$NC_CLIENT_DB_ID" "$APIV3_SCOPE_ID"
+add_scope_to_client "$OP_CLIENT_DB_ID" "$NC_AUD_SCOPE_ID"
 
 # bring Keycloak to foreground
 wait $KC_PID
