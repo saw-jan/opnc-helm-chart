@@ -42,6 +42,9 @@ openproject:
     readOnlyRootFilesystem: false
   image:
     tag: '16.1'
+  # TODO: currently, the container entrypoint cannot be overridden
+  # See: https://github.com/opf/helm-charts/issues/215
+  # command: ['/scripts/entrypoint.sh']
   openproject:
     https: true
     host: openproject.local
@@ -64,6 +67,7 @@ openproject:
     OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://keycloak.local/realms/opnc
     OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://openproject.local/
     DATABASE_HOST: 'op-postgresql'
+    OPENPROJECT_SEED__ENTERPRISE__TOKEN: ''
     # Git branch to use as the source
     # NOTE: 'version' will be ignored if this is set
     # Example: dev
