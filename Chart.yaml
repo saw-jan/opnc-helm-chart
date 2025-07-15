@@ -15,3 +15,6 @@ dependencies:
   - name: keycloak
     version: ~24.7.5
     repository: oci://registry-1.docker.io/bitnamicharts
+  - name: openproject
+    version: ~10.1.2
+    repository: https://charts.openproject.org
