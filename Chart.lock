@@ -1,9 +1,12 @@
 dependencies:
 - name: keycloak
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 24.7.5
+  version: 24.7.7
 - name: openproject
   repository: https://charts.openproject.org
   version: 10.1.2
-digest: sha256:4017a02228fd15b7f9bf5e6709ae3c1e87bbf6e01b9648c1fc73b0a5ce312245
-generated: "2025-07-09T14:15:53.324248024+05:45"
+- name: nextcloud
+  repository: https://nextcloud.github.io/helm
+  version: 7.0.0
+digest: sha256:98bba0e111beb669ddeaafa03158a66e8289bd2d6858a5a01d3c6a1debf5ea97
+generated: "2025-07-15T18:20:43.061221686+05:45"

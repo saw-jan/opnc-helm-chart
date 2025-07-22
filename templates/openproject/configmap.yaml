@@ -4,4 +4,4 @@ metadata:
   name: op-entry-configmap
 data:
   entrypoint.sh: |
-{{ .Files.Get "scripts/openproject.sh" | indent 4 }}}}
+{{ .Files.Get "scripts/openproject.sh" | indent 4 }}
