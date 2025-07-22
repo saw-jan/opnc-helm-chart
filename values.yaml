@@ -35,6 +35,8 @@ nextcloud:
     username: admin
     password: admin
     extraEnv:
+      - name: OVERWRITECLIURL
+        value: 'https://nextcloud.local'
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
         value: nextcloud
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET
@@ -45,6 +47,11 @@ nextcloud:
         value: keycloak
       - name: OIDC_KEYCLOAK_DISCOVERY_URL
         value: https://keycloak.local/realms/opnc/.well-known/openid-configuration
+      #
+      # Git branch to use as the source
+      - name: NC_SERVE_GIT_BRANCH
+        value: ''
+      #
       # Integration app setup method
       # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
       - name: INTEGRATION_APP_SETUP_METHOD
@@ -55,30 +62,64 @@ nextcloud:
         value: keycloak.local
       - name: NEXTCLOUD_ENABLE_APPS
         valueFrom:
-          secretKeyRef:
+          configMapKeyRef:
             name: nextcloud-enable-apps
             key: enable-apps
-    extraVolumes:
-      - name: entrypoint
-        configMap:
-          name: nc-entry-configmap
-          defaultMode: 0755
-      - name: scripts
-        configMap:
-          name: nc-scripts-configmap
-          defaultMode: 0755
     extraVolumeMounts:
-      - name: scripts
-        mountPath: /shared
+      - name: presetup
+        mountPath: /docker-entrypoint-hooks.d/pre-installation/presetup.sh
+        subPath: presetup.sh
+      - name: postinstall
+        mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
+        subPath: postinstall.sh
+      - name: beforestart
+        mountPath: /docker-entrypoint-hooks.d/before-starting/beforestart.sh
+        subPath: beforestart.sh
+      - name: postsetup
+        mountPath: /docker-entrypoint-hooks.d/postsetup.sh
+        subPath: postsetup.sh
+    extraVolumes:
+      - name: presetup
+        configMap:
+          name: nc-presetup-configmap
+          defaultMode: 0755
+      - name: postinstall
+        configMap:
+          name: nc-postinstall-configmap
+          defaultMode: 0755
+      - name: beforestart
+        configMap:
+          name: nc-beforestart-configmap
+          defaultMode: 0755
+      - name: postsetup
+        configMap:
+          name: nc-postsetup-configmap
+          defaultMode: 0755
+  internalDatabase:
+    enabled: false
+  externalDatabase:
+    enabled: true
+    type: postgresql
+    host: nc-postgresql
+    database: nextcloud
+    user: nextcloud
+    password: nextcloud
   postgresql:
+    enabled: true
     fullnameOverride: 'nc-postgresql'
     global:
       postgresql:
         auth:
+          username: nextcloud
           password: nextcloud
+          database: nextcloud
     primary:
       podLabels:
         app.kubernetes.io/name: 'nc-postgresql'
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
 
 openproject:
   fullnameOverride: 'openproject'

@@ -1,10 +1,45 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nc-scripts-configmap
+  name: nc-presetup-configmap
 data:
-{{ range $path, $file := .Files.Glob "scripts/nextcloud/**" }}
-  {{ $name := trimPrefix "scripts/nextcloud/" $path | replace "/" "_" }}
-  {{ $name }}: |
-{{ $.Files.Get $path | indent 4 }}
-{{ end }}
+  presetup.sh: |
+{{ .Files.Get "scripts/nextcloud/pre-installation/presetup.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nc-postinstall-configmap
+data:
+  postinstall.sh: |
+{{ .Files.Get "scripts/nextcloud/post-installation/postinstall.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nc-beforestart-configmap
+data:
+  beforestart.sh: |
+{{ .Files.Get "scripts/nextcloud/before-starting/beforestart.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nc-postsetup-configmap
+data:
+  postsetup.sh: |
+{{ .Files.Get "scripts/nextcloud/postsetup.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-enable-apps
+type: Opaque
+data:
+  enable-apps: {{ range $app := .Values.nextcloud.enableApps -}}
+    {{ $app.name }}{{ if $app.gitBranch }}@git={{ $app.gitBranch }} {{ else }}{{ if $app.version }}@{{ $app.version }}{{ end }} {{ end }}
+  {{- end }}

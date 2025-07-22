@@ -2,87 +2,18 @@
 
 set -eo pipefail
 
-# shellcheck source=/dev/null
-source ~/.bashrc
-WORKING_DIR=$(pwd)
+echo "###################################"
+echo "# Setup integration app           #"
+echo "###################################"
 
-###################################
-# Enable apps                     #
-###################################
-OLD_IFS=$IFS
-# trim leading and trailing whitespaces
-NEXTCLOUD_ENABLE_APPS=$(echo "$NEXTCLOUD_ENABLE_APPS" | xargs)
-for app in $NEXTCLOUD_ENABLE_APPS; do
-    IFS="@" read -r app_name app_version <<<"$app"
-    IFS=$OLD_IFS
-
-    APP_DIR="apps/$app_name"
-
-    occ a:d "$app_name"
-    rm -rf "$APP_DIR" || true
-
-    GIT_REPO_URL="https://github.com/nextcloud/$app_name"
-    if [[ "$app_name" == "oidc" ]]; then
-        GIT_REPO_URL="https://github.com/H2CK/$app_name"
-    fi
-
-    if [[ -z "$app_version" ]]; then
-        echo "[INFO] Enabling app '$app_name': latest"
-    elif [[ "$app_version" =~ "git="* ]]; then
-        mkdir -p "$APP_DIR"
-        # extract the branch name
-        app_branch=${app_version#git=}
-        echo "[INFO] Enabling app '$app_name': '$app_branch' branch"
-
-        git clone --single-branch \
-            -b "$app_branch" \
-            --depth 1 \
-            "${GIT_REPO_URL}.git" "$APP_DIR"
-
-        cd "$APP_DIR"
-        composer install --no-dev
-        npm ci && npm run dev
+has_integration_app() {
+    if [[ -d "apps/integration_openproject" ]] || [[ -d "custom_apps/integration_openproject" ]]; then
+        return 0
     else
-        mkdir -p "$APP_DIR"
-        echo "[INFO] Enabling app '$app_name': $app_version"
-        RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-$app_version.tar.gz"
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
-            # try without 'v' prefix
-            RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/$app_version/$app_name-$app_version.tar.gz"
-        fi
-        # download source from tag archive if release asset is not found
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
-            TAG_ARCHIVE_URL="$GIT_REPO_URL/archive/refs/tags/v$app_version.tar.gz"
-            if [[ $(curl -s -o /dev/null -w "%{http_code}" "$TAG_ARCHIVE_URL") == 404 ]]; then
-                # try without 'v' prefix
-                TAG_ARCHIVE_URL="$GIT_REPO_URL/archive/refs/tags/$app_version.tar.gz"
-            fi
-            if [[ $(curl -s -o /dev/null -w "%{http_code}" "$TAG_ARCHIVE_URL") == 404 ]]; then
-                echo "[ERROR] Cannot find app '$app_name' with version '$app_version': $GIT_REPO_URL"
-                echo -e "\tTry with out the 'v' prefix in the version number."
-                continue
-            fi
-            curl -sL "$RELEASE_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1
-            # build the source
-            cd "$APP_DIR"
-            composer install --no-dev
-            npm ci && npm run dev
-        else
-            curl -sL "$RELEASE_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1
-        fi
+        return 1
     fi
+}
 
-    cd "$WORKING_DIR"
-    # enable the app
-    occ a:e "$app_name"
-done
-
-# upgrade Nextcloud apps
-occ upgrade
-
-###################################
-# Setup integration app           #
-###################################
 has_integration_setup() {
     local response
     local setup_without_project_folder
@@ -121,7 +52,7 @@ wait_for_server() {
     return 1
 }
 
-if [[ ! -d "apps/integration_openproject" ]]; then
+if ! has_integration_app; then
     echo "[INFO] integration_openproject app is not installed. Skipping integration setup."
     exit 0
 fi
@@ -138,6 +69,9 @@ if [[ "$INTEGRATION_APP_SETUP_METHOD" != "oauth2" && "$INTEGRATION_APP_SETUP_MET
 fi
 
 # wait for servers
+echo "[INFO] Waiting for Nextcloud to be ready..."
+wait_for_server "http://nextcloud.local"
+echo "[INFO] Nextcloud is ready."
 echo "[INFO] Waiting for OpenProject to be ready..."
 wait_for_server "https://$OPENPROJECT_HOST"
 echo "[INFO] OpenProject is ready."
