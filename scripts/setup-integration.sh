@@ -6,14 +6,6 @@ echo "###################################"
 echo "# Setup integration app           #"
 echo "###################################"
 
-has_integration_app() {
-    if [[ -d "apps/integration_openproject" ]] || [[ -d "custom_apps/integration_openproject" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 has_integration_setup() {
     local response
     local setup_without_project_folder
@@ -52,11 +44,6 @@ wait_for_server() {
     return 1
 }
 
-if ! has_integration_app; then
-    echo "[INFO] integration_openproject app is not installed. Skipping integration setup."
-    exit 0
-fi
-
 if has_integration_setup; then
     echo "[INFO] Integration app is already set up. Skipping integration setup."
     exit 0
@@ -70,18 +57,19 @@ fi
 
 # wait for servers
 echo "[INFO] Waiting for Nextcloud to be ready..."
-wait_for_server "http://nextcloud.local"
+wait_for_server "https://$NEXTCLOUD_HOST"
 echo "[INFO] Nextcloud is ready."
 echo "[INFO] Waiting for OpenProject to be ready..."
 wait_for_server "https://$OPENPROJECT_HOST"
 echo "[INFO] OpenProject is ready."
 
-cd "apps/integration_openproject"
+SCRIPT_URL="https://raw.githubusercontent.com/nextcloud/integration_openproject/master"
+
 if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
-    curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_setup.sh -o integration_setup.sh
+    curl -s $SCRIPT_URL/integration_setup.sh -o integration_setup.sh
 
     SETUP_PROJECT_FOLDER='true' \
-        NEXTCLOUD_HOST=https://$VIRTUAL_HOST \
+        NEXTCLOUD_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
         OPENPROJECT_HOST=https://$OPENPROJECT_HOST \
@@ -91,14 +79,16 @@ if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
         bash integration_setup.sh
 
 elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-nextcloud" ]]; then
-    curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    curl -s $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    # patch for sort command compatibility
+    sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
     NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
         NC_INTEGRATION_ENABLE_NAVIGATION=false \
         NC_INTEGRATION_ENABLE_SEARCH=false \
-        NC_HOST=https://$VIRTUAL_HOST \
+        NC_HOST=https://$NEXTCLOUD_HOST \
         OP_ADMIN_USERNAME=admin \
         OP_ADMIN_PASSWORD=admin \
         OP_STORAGE_NAME=nextcloud \
@@ -111,9 +101,11 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
     wait_for_server "https://$KEYCLOAK_HOST"
     echo "[INFO] Keycloak is ready."
 
-    curl -s https://raw.githubusercontent.com/nextcloud/integration_openproject/master/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    curl -s $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    # patch for sort command compatibility
+    sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
-    NC_HOST=https://$VIRTUAL_HOST \
+    NC_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
         NC_INTEGRATION_PROVIDER_TYPE=external \

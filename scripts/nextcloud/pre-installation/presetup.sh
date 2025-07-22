@@ -2,10 +2,6 @@
 
 set -eo pipefail
 
-# rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt
-# cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt
-# update-ca-certificates
-
 if [[ -n "$NC_SERVE_GIT_BRANCH" ]]; then
     WEB_ROOT="/var/www/html"
     echo "Pulling Nextcloud server from github branch '${NC_SERVE_GIT_BRANCH}'..."

@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -14,24 +15,6 @@ metadata:
 data:
   postinstall.sh: |
 {{ .Files.Get "scripts/nextcloud/post-installation/postinstall.sh" | indent 4 }}
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nc-beforestart-configmap
-data:
-  beforestart.sh: |
-{{ .Files.Get "scripts/nextcloud/before-starting/beforestart.sh" | indent 4 }}
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nc-postsetup-configmap
-data:
-  postsetup.sh: |
-{{ .Files.Get "scripts/nextcloud/postsetup.sh" | indent 4 }}
 
 ---
 apiVersion: v1

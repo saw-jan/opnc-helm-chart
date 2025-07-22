@@ -8,6 +8,10 @@ openprojectHost: 'openproject.local'
 # Example: keycloak.local
 keycloakHost: 'keycloak.local'
 
+# Integration app setup method
+# Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+integrationSetupMethod: 'oauth2'
+
 nextcloud:
   fullnameOverride: 'nextcloud'
   image:
@@ -30,54 +34,36 @@ nextcloud:
     - name: 'groupfolders'
       version: ''
       gitBranch: ''
+  lifecycle:
+    postStartCommand:
+      [
+        '/bin/sh',
+        '-c',
+        'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt && update-ca-certificates',
+      ]
   nextcloud:
     host: nextcloud.local
     username: admin
     password: admin
     extraEnv:
+      # Git branch to use as the source
+      - name: NC_SERVE_GIT_BRANCH
+        value: ''
       - name: OVERWRITECLIURL
         value: 'https://nextcloud.local'
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
         value: nextcloud
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET
         value: nextcloud-secret
-      - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
-        value: openproject
       - name: OIDC_KEYCLOAK_PROVIDER_NAME
         value: keycloak
       - name: OIDC_KEYCLOAK_DISCOVERY_URL
         value: https://keycloak.local/realms/opnc/.well-known/openid-configuration
-      #
-      # Git branch to use as the source
-      - name: NC_SERVE_GIT_BRANCH
-        value: ''
-      #
-      # Integration app setup method
-      # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
-      - name: INTEGRATION_APP_SETUP_METHOD
-        value: sso-external
-      - name: OPENPROJECT_HOST
-        value: openproject.local
-      - name: KEYCLOAK_HOST
-        value: keycloak.local
       - name: NEXTCLOUD_ENABLE_APPS
         valueFrom:
           configMapKeyRef:
             name: nextcloud-enable-apps
             key: enable-apps
-    extraVolumeMounts:
-      - name: presetup
-        mountPath: /docker-entrypoint-hooks.d/pre-installation/presetup.sh
-        subPath: presetup.sh
-      - name: postinstall
-        mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
-        subPath: postinstall.sh
-      - name: beforestart
-        mountPath: /docker-entrypoint-hooks.d/before-starting/beforestart.sh
-        subPath: beforestart.sh
-      - name: postsetup
-        mountPath: /docker-entrypoint-hooks.d/postsetup.sh
-        subPath: postsetup.sh
     extraVolumes:
       - name: presetup
         configMap:
@@ -87,14 +73,18 @@ nextcloud:
         configMap:
           name: nc-postinstall-configmap
           defaultMode: 0755
-      - name: beforestart
-        configMap:
-          name: nc-beforestart-configmap
-          defaultMode: 0755
-      - name: postsetup
-        configMap:
-          name: nc-postsetup-configmap
-          defaultMode: 0755
+      - name: ca-cert
+        secret:
+          secretName: opnc-ca-secret
+    extraVolumeMounts:
+      - name: presetup
+        mountPath: /docker-entrypoint-hooks.d/pre-installation/presetup.sh
+        subPath: presetup.sh
+      - name: postinstall
+        mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
+        subPath: postinstall.sh
+      - name: ca-cert
+        mountPath: /certs
   internalDatabase:
     enabled: false
   externalDatabase:
@@ -175,9 +165,14 @@ openproject:
       configMap:
         name: op-entry-configmap
         defaultMode: 0755
+    - name: ca-cert
+      secret:
+        secretName: opnc-ca-secret
   extraVolumeMounts:
     - name: entrypoint
       mountPath: /scripts
+    - name: ca-cert
+      mountPath: /certs
   postgresql:
     fullnameOverride: 'op-postgresql'
     image:
@@ -187,6 +182,7 @@ openproject:
         app.kubernetes.io/name: 'op-postgresql'
 
 keycloak:
+  host: keycloak.local
   fullnameOverride: 'keycloak'
   service:
     ports:

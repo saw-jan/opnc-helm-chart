@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: setup-integration
+          image: ddev/ddev-utilities
+          lifecycle:
+            postStart:
+              exec:
+                command: ['/bin/sh', '-c', 'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt && update-ca-certificates']
+          command: ['/scripts/setup-integration.sh']
+          env:
+            - name: NEXTCLOUD_HOST
+              value: '{{ .Values.nextcloud.nextcloud.host }}'
+            - name: OPENPROJECT_HOST
+              value: '{{ .Values.openproject.openproject.host }}'
+            - name: KEYCLOAK_HOST
+              value: '{{ .Values.keycloak.host }}'
+            - name: INTEGRATION_APP_SETUP_METHOD
+              value: '{{ .Values.integrationSetupMethod }}'
+            - name: OIDC_KEYCLOAK_PROVIDER_NAME
+              value: keycloak
+            - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
+              value: '{{ .Values.oidc.clients.openproject.id }}'
+          volumeMounts:
+            - name: setup-script
+              mountPath: /scripts/setup-integration.sh
+              subPath: setup-integration.sh
+            {{- include "opnc.volumes.caCertVolumeMount" . | indent 12 }}
+
+      volumes:
+        - name: setup-script
+          configMap:
+            name: opnc-setup-configmap
+            defaultMode: 0755
+        {{- include "opnc.volumes.caCertVolume" . | indent 8 }}
