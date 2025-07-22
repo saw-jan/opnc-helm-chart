@@ -79,6 +79,9 @@ done
 # upgrade Nextcloud apps
 $OCC upgrade
 
+###################################
+# Setup apps                      #
+###################################
 $OCC security:certificates:import /etc/ssl/certs/ca-certificates.crt
 # setup user_oidc app
 $OCC config:app:set --value=1 user_oidc store_login_token
