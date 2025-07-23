@@ -12,7 +12,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ['/bin/sh', '-c', 'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt && update-ca-certificates']
+                command: ['/bin/sh', '-c', 'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && update-ca-certificates']
           command: ['/scripts/setup-integration.sh']
           env:
             - name: NEXTCLOUD_HOST

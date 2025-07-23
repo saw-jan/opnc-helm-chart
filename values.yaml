@@ -15,6 +15,7 @@ integrationSetupMethod: 'oauth2'
 nextcloud:
   fullnameOverride: 'nextcloud'
   image:
+    # Nextcloud version image tag
     tag: '31'
   enableApps:
     # Add the folloing entry for each app you want to enable
@@ -24,31 +25,34 @@ nextcloud:
     # NOTE: 'version' will be ignored if 'gitBranch' is set
     - name: 'integration_openproject'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
     - name: 'oidc'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
     - name: 'user_oidc'
       version: ''
       gitBranch: ''
     - name: 'groupfolders'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
   lifecycle:
     postStartCommand:
-      [
-        '/bin/sh',
-        '-c',
-        'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt && update-ca-certificates',
-      ]
+      - /bin/sh
+      - -c
+      - |
+        rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
+        cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
+        update-ca-certificates && \
+        /docker-entrypoint-hooks.d/presetup.sh >> /var/log/presetup.log 2>&1
   nextcloud:
     host: nextcloud.local
     username: admin
     password: admin
     extraEnv:
       # Git branch to use as the source
-      - name: NC_SERVE_GIT_BRANCH
-        value: ''
+      # NOTE: NOT WORKING YET (PERMISSIONS ISSUE)
+      # - name: NC_SERVE_GIT_BRANCH
+      #   value: ''
       - name: OVERWRITECLIURL
         value: 'https://nextcloud.local'
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
@@ -69,6 +73,10 @@ nextcloud:
         configMap:
           name: nc-presetup-configmap
           defaultMode: 0755
+      - name: preinstall
+        configMap:
+          name: nc-preinstall-configmap
+          defaultMode: 0755
       - name: postinstall
         configMap:
           name: nc-postinstall-configmap
@@ -78,8 +86,11 @@ nextcloud:
           secretName: opnc-ca-secret
     extraVolumeMounts:
       - name: presetup
-        mountPath: /docker-entrypoint-hooks.d/pre-installation/presetup.sh
+        mountPath: /docker-entrypoint-hooks.d/presetup.sh
         subPath: presetup.sh
+      - name: preinstall
+        mountPath: /docker-entrypoint-hooks.d/pre-installation/preinstall.sh
+        subPath: preinstall.sh
       - name: postinstall
         mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
         subPath: postinstall.sh
@@ -177,6 +188,8 @@ openproject:
     fullnameOverride: 'op-postgresql'
     image:
       tag: '17.5.0-debian-12-r16'
+    auth:
+      password: 'openproject'
     primary:
       podLabels:
         app.kubernetes.io/name: 'op-postgresql'
@@ -240,9 +253,7 @@ oidc:
 ingress:
   # Ingress class name
   className: 'nginx'
-  # Issuer name for cert-manager
-  issuerName: ''
-  # CA secret name
-  caSecretName: ''
   # TLS secret name
-  tlsSecretName: ''
+  tlsSecretName: 'opnc-tls-secret'
+  # Use exisiting TLS secret name. If set, the above tlsSecretName will be ignored.
+  existingTlsSecretName: ''

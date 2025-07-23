@@ -1,3 +1,4 @@
+{{ if not .Values.ingress.existingTlsSecretName }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -46,3 +47,4 @@ spec:
   issuerRef:
     name: {{ include "opnc.issuerName" . }}
     kind: Issuer
+{{ end }}

@@ -23,15 +23,19 @@ Variables for cert-manager and TLS secrets.
 */}}
 
 {{- define "opnc.issuerName" -}}
-{{ .Values.ingress.issuerName | default "opnc-ca-issuer" }}
+opnc-ca-issuer
 {{- end -}}
 
 {{- define "opnc.caSecretName" -}}
-{{ .Values.ingress.caSecretName | default "opnc-ca-secret" }}
+opnc-ca-secret
 {{- end -}}
 
 {{- define "opnc.tlsSecretName" -}}
-{{ .Values.ingress.tlsSecretName | default "opnc-tsl-secret" }}
+    {{- if .Values.ingress.existingTlsSecretName }}
+        {{- .Values.ingress.existingTlsSecretName -}}
+    {{- else }}
+        {{- .Values.ingress.tlsSecretName | default "opnc-tls-secret" -}}
+    {{- end -}}
 {{- end -}}
 
 {{/*
