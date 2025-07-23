@@ -25,16 +25,16 @@ nextcloud:
     # NOTE: 'version' will be ignored if 'gitBranch' is set
     - name: 'integration_openproject'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
     - name: 'oidc'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
     - name: 'user_oidc'
       version: ''
       gitBranch: ''
     - name: 'groupfolders'
       version: ''
-      gitBranch: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
   lifecycle:
     postStartCommand:
       - /bin/sh
@@ -50,8 +50,9 @@ nextcloud:
     password: admin
     extraEnv:
       # Git branch to use as the source
-      - name: NC_SERVE_GIT_BRANCH
-        value: ''
+      # NOTE: NOT WORKING YET (PERMISSIONS ISSUE)
+      # - name: NC_SERVE_GIT_BRANCH
+      #   value: ''
       - name: OVERWRITECLIURL
         value: 'https://nextcloud.local'
       - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID

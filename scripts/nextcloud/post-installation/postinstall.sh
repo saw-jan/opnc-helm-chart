@@ -44,30 +44,23 @@ for app in $NEXTCLOUD_ENABLE_APPS; do
         provided_app_version=$app_version
         app_version=${app_version#v}
         echo "[INFO] Enabling app '$app_name': $app_version"
-        RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-$app_version.tar.gz"
+        # e.g.: https://github.com/nextcloud-releases/user_oidc/releases/download/v7.2.0/user_oidc-v7.2.0.tar.gz
+        RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-v$app_version.tar.gz"
         if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
             # try without 'v' prefix
+            # e.g.: https://github.com/nextcloud/integration_openproject/releases/download/v2.9.1/integration_openproject-2.9.1.tar.gz
+            RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-$app_version.tar.gz"
+        fi
+        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
+            # try without 'v' prefix
+            # e.g.: https://github.com/H2CK/oidc/releases/download/1.8.1/oidc-1.8.1.tar.gz
             RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/$app_version/$app_name-$app_version.tar.gz"
         fi
-        # download source from tag archive if release asset is not found
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
-            SRC_ARCHIVE_URL="$GIT_REPO_URL/archive/refs/tags/v$app_version.tar.gz"
-            if [[ $(curl -s -o /dev/null -w "%{http_code}" "$SRC_ARCHIVE_URL") == 404 ]]; then
-                # try without 'v' prefix
-                SRC_ARCHIVE_URL="$GIT_REPO_URL/archive/refs/tags/$app_version.tar.gz"
-            fi
-            if [[ $(curl -s -o /dev/null -w "%{http_code}" "$SRC_ARCHIVE_URL") == 404 ]]; then
-                echo "[ERROR] Cannot find app '$app_name' with version '$provided_app_version': $GIT_REPO_URL"
-                continue
-            fi
-            curl -sL "$SRC_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1
-            # build the source
-            cd "$APP_DIR"
-            composer install --no-dev
-            npm ci && npm run dev
-        else
-            curl -sL "$RELEASE_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1
+        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") != 200 ]]; then
+            echo "[ERROR] App '$app_name' version '$provided_app_version' not found in '$GIT_REPO_URL'"
+            exit 1
         fi
+        curl -sL "$RELEASE_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1
     fi
 
     cd "$WORKING_DIR"
