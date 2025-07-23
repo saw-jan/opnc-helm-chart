@@ -15,6 +15,7 @@ integrationSetupMethod: 'oauth2'
 nextcloud:
   fullnameOverride: 'nextcloud'
   image:
+    # Nextcloud version image tag
     tag: '31'
   enableApps:
     # Add the folloing entry for each app you want to enable
