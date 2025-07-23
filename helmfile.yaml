@@ -1,10 +1,16 @@
+---
+environments:
+  default:
+    values:
+      - environments/default/config.yaml
+---
 repositories:
   - name: openproject
     url: https://charts.openproject.org
   - name: nextcloud
     url: https://nextcloud.github.io/helm
   - name: bitnami
-    url: oci://registry-1.docker.io/bitnamicharts
+    url: https://charts.bitnami.com/bitnami
 
 releases:
   - name: openproject
@@ -22,3 +28,7 @@ releases:
     version: ~24.7.5
     values:
       - values/kc-values.gotmpl
+  - name: opnc-integration
+    chart: ./charts/opnc-integration
+    values:
+      - values/integration.gotmpl
