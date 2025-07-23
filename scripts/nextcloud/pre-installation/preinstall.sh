@@ -21,12 +21,12 @@ function wait_for_command() {
     exit 1
 }
 
-wait_for_command git
-wait_for_command node
-wait_for_command npm
-wait_for_command composer
-
 if [ -n "$NC_SERVE_GIT_BRANCH" ]; then
+    wait_for_command git
+    wait_for_command node
+    wait_for_command npm
+    wait_for_command composer
+
     echo "Pulling Nextcloud server from GitHub branch '${NC_SERVE_GIT_BRANCH}'..."
     SRC_DIR=/tmp/server
     rm -rf $SRC_DIR || true

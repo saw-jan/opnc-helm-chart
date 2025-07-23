@@ -44,20 +44,27 @@ for app in $NEXTCLOUD_ENABLE_APPS; do
         provided_app_version=$app_version
         app_version=${app_version#v}
         echo "[INFO] Enabling app '$app_name': $app_version"
+        # https://github.com/nextcloud/integration_openproject/releases/download/v2.8.1/integration_openproject-2.8.1.tar.gz
         # e.g.: https://github.com/nextcloud-releases/user_oidc/releases/download/v7.2.0/user_oidc-v7.2.0.tar.gz
         RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-v$app_version.tar.gz"
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
+        URL1=$RELEASE_ARCHIVE_URL
+        if [[ $(curl -s -XHEAD -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
             # try without 'v' prefix
             # e.g.: https://github.com/nextcloud/integration_openproject/releases/download/v2.9.1/integration_openproject-2.9.1.tar.gz
             RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/v$app_version/$app_name-$app_version.tar.gz"
+            URL2=$RELEASE_ARCHIVE_URL
         fi
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
+        if [[ $(curl -s -XHEAD -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
             # try without 'v' prefix
             # e.g.: https://github.com/H2CK/oidc/releases/download/1.8.1/oidc-1.8.1.tar.gz
             RELEASE_ARCHIVE_URL="$GIT_REPO_URL/releases/download/$app_version/$app_name-$app_version.tar.gz"
+            URL3=$RELEASE_ARCHIVE_URL
         fi
-        if [[ $(curl -s -o /dev/null -w "%{http_code}" "$RELEASE_ARCHIVE_URL") != 200 ]]; then
-            echo "[ERROR] App '$app_name' version '$provided_app_version' not found in '$GIT_REPO_URL'"
+        if [[ $(curl -s -XHEAD -w "%{http_code}" "$RELEASE_ARCHIVE_URL") == 404 ]]; then
+            echo "[ERROR] App '$app_name' version '$provided_app_version' not found using the following:"
+            echo -e "\t- $URL1"
+            echo -e "\t- $URL2"
+            echo -e "\t- $URL3"
             exit 1
         fi
         curl -sL "$RELEASE_ARCHIVE_URL" | tar -xz -C "$APP_DIR" --strip-components=1

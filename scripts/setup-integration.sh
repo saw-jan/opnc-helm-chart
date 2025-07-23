@@ -12,7 +12,7 @@ has_integration_setup() {
     local setup_with_project_folder
 
     response=$(curl -s -XGET -uadmin:admin \
-        "https://$VIRTUAL_HOST/index.php/apps/integration_openproject/check-admin-config" \
+        "https://$NEXTCLOUD_HOST/index.php/apps/integration_openproject/check-admin-config" \
         -H 'Content-Type: application/json')
     setup_without_project_folder=$(echo "$response" | jq -r ".config_status_without_project_folder")
     setup_with_project_folder=$(echo "$response" | jq -r ".project_folder_setup_status")
@@ -66,9 +66,14 @@ echo "[INFO] OpenProject is ready."
 SCRIPT_URL="https://raw.githubusercontent.com/nextcloud/integration_openproject/master"
 
 if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
-    curl -s $SCRIPT_URL/integration_setup.sh -o integration_setup.sh
+    status=$(curl -s -w "%{http_code}" $SCRIPT_URL/integration_setup.sh -o integration_setup.sh)
+    if [[ $status -ne 200 ]]; then
+        echo "[ERROR] Failed to download script: $SCRIPT_URL/integration_setup.sh"
+        exit 1
+    fi
 
-    SETUP_PROJECT_FOLDER='true' \
+    INTEGRATION_SETUP_DEBUG=true \
+        SETUP_PROJECT_FOLDER='true' \
         NEXTCLOUD_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
@@ -79,11 +84,16 @@ if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
         bash integration_setup.sh
 
 elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-nextcloud" ]]; then
-    curl -s $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    status=$(curl -s -w "%{http_code}" $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh)
+    if [[ $status -ne 200 ]]; then
+        echo "[ERROR] Failed to download script: $SCRIPT_URL/integration_oidc_setup.sh"
+        exit 1
+    fi
     # patch for sort command compatibility
     sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
-    NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
+    INTEGRATION_SETUP_DEBUG=true \
+        NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
         NC_INTEGRATION_ENABLE_NAVIGATION=false \
@@ -102,10 +112,16 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
     echo "[INFO] Keycloak is ready."
 
     curl -s $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh
+    status=$(curl -s -w "%{http_code}" $SCRIPT_URL/integration_oidc_setup.sh -o integration_oidc_setup.sh)
+    if [[ $status -ne 200 ]]; then
+        echo "[ERROR] Failed to download script: $SCRIPT_URL/integration_oidc_setup.sh"
+        exit 1
+    fi
     # patch for sort command compatibility
     sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
-    NC_HOST=https://$NEXTCLOUD_HOST \
+    INTEGRATION_SETUP_DEBUG=true \
+        NC_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
         NC_INTEGRATION_PROVIDER_TYPE=external \
