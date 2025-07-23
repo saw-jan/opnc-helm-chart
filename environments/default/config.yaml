@@ -1,0 +1,41 @@
+integration:
+  # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+  setupMethod: 'oauth2'
+
+openproject:
+  version: '16'
+  fullnameOverride: openproject
+  host: openproject.local
+  postgresql:
+    host: op-postgresql
+    password: openproject
+
+nextcloud:
+  version: '31'
+  fullnameOverride: nextcloud
+  host: nextcloud.local
+  postgresql:
+    host: nc-postgresql
+    database: nextcloud
+    username: nextcloud
+    password: nextcloud
+
+keycloak:
+  version: '26.2.5'
+  fullnameOverride: keycloak
+  host: keycloak.local
+  providerName: keycloak
+  realm:
+    name: opnc
+    clients:
+      nextcloud:
+        id: nextcloud
+        secret: nextcloud-secret
+      openproject:
+        id: openproject
+        secret: openproject-secret
+  postgresql:
+    host: kc-postgresql
+
+ingress:
+  existingTlsSecretName: ''

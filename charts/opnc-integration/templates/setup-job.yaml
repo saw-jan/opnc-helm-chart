@@ -24,7 +24,7 @@ spec:
             - name: INTEGRATION_APP_SETUP_METHOD
               value: '{{ .Values.integrationSetupMethod }}'
             - name: OIDC_KEYCLOAK_PROVIDER_NAME
-              value: keycloak
+              value: '{{ include "opnc.oidc.providerName" . }}'
             - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
               value: '{{ include "opnc.oidc.openprojectClientId" . }}'
           volumeMounts:
