@@ -1,14 +1,4 @@
-# Nextcloud server host name
-# Example: nextcloud.local
-nextcloudHost: 'nextcloud.local'
-# OpenProject server host name
-# Example: openproject.local
-openprojectHost: 'openproject.local'
-# Keycloak server host name
-# Example: keycloak.local
-keycloakHost: 'keycloak.local'
-
-# Integration app setup method
+# Integration setup method
 # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
 integrationSetupMethod: 'oauth2'
 
@@ -139,7 +129,7 @@ openproject:
       password_reset: 'false'
     oidc:
       enabled: true
-      displayName: 'Keycloak'
+      displayName: 'keycloak'
       identifier: 'openproject'
       secret: 'openproject-secret'
       authorizationEndpoint: '/realms/opnc/protocol/openid-connect/auth'
@@ -207,6 +197,16 @@ keycloak:
   auth:
     adminUser: 'admin'
     adminPassword: 'admin'
+  # custom realm configurations
+  realm:
+    name: 'opnc'
+    clients:
+      nextcloud:
+        id: 'nextcloud'
+        secret: 'nextcloud-secret'
+      openproject:
+        id: 'openproject'
+        secret: 'openproject-secret'
   extraEnvVars:
     - name: KEYCLOAK_HOSTNAME
       value: keycloak.local
@@ -239,16 +239,6 @@ keycloak:
     primary:
       podLabels:
         app.kubernetes.io/name: 'kc-postgresql'
-
-oidc:
-  realmName: 'opnc'
-  clients:
-    nextcloud:
-      id: 'nextcloud'
-      secret: 'nextcloud-secret'
-    openproject:
-      id: 'openproject'
-      secret: 'openproject-secret'
 
 ingress:
   # Ingress class name

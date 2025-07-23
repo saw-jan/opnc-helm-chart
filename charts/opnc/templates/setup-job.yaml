@@ -16,17 +16,17 @@ spec:
           command: ['/scripts/setup-integration.sh']
           env:
             - name: NEXTCLOUD_HOST
-              value: '{{ .Values.nextcloud.nextcloud.host }}'
+              value: '{{ include "opnc.nextcloudHost" . }}'
             - name: OPENPROJECT_HOST
-              value: '{{ .Values.openproject.openproject.host }}'
+              value: '{{ include "opnc.openprojectHost" . }}'
             - name: KEYCLOAK_HOST
-              value: '{{ .Values.keycloak.host }}'
+              value: '{{ include "opnc.keycloakHost" . }}'
             - name: INTEGRATION_APP_SETUP_METHOD
               value: '{{ .Values.integrationSetupMethod }}'
             - name: OIDC_KEYCLOAK_PROVIDER_NAME
               value: keycloak
             - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
-              value: '{{ .Values.oidc.clients.openproject.id }}'
+              value: '{{ include "opnc.oidc.openprojectClientId" . }}'
           volumeMounts:
             - name: setup-script
               mountPath: /scripts/setup-integration.sh

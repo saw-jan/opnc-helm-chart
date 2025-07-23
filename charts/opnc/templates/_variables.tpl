@@ -5,15 +5,15 @@ Host name of the servers used in the stack.
 */}}
 
 {{- define "opnc.openprojectHost" -}}
-{{ .Values.openprojectHost | default "openproject.local" }}
+{{ .Values.openproject.openproject.host | default "openproject.local" }}
 {{- end -}}
 
 {{- define "opnc.nextcloudHost" -}}
-{{ .Values.nextcloudHost | default "nextcloud.local" }}
+{{ .Values.nextcloud.nextcloud.host | default "nextcloud.local" }}
 {{- end -}}
 
 {{- define "opnc.keycloakHost" -}}
-{{ .Values.keycloakHost | default "keycloak.local" }}
+{{ .Values.keycloak.host | default "keycloak.local" }}
 {{- end -}}
 
 {{/*
@@ -49,21 +49,21 @@ OpenID Connect variables.
 {{- end -}}
 
 {{- define "opnc.oidc.realmName" -}}
-{{ .Values.oidc.realmName | default "opnc" }}
+{{ .Values.keycloak.realm.name | default "opnc" }}
 {{- end -}}
 
 {{- define "opnc.oidc.nextcloudClientId" -}}
-{{ .Values.oidc.clients.nextcloud.id | default "nextcloud" }}
+{{ .Values.keycloak.realm.clients.nextcloud.id | default "nextcloud" }}
 {{- end -}}
 
 {{- define "opnc.oidc.nextcloudClientSecret" -}}
-{{ .Values.oidc.clients.nextcloud.secret | default "nextcloud-secret" }}
+{{ .Values.keycloak.realm.clients.nextcloud.secret | default "nextcloud-secret" }}
 {{- end -}}
 
 {{- define "opnc.oidc.openprojectClientId" -}}
-{{ .Values.oidc.clients.openproject.id | default "openproject" }}
+{{ .Values.keycloak.realm.clients.openproject.id | default "openproject" }}
 {{- end -}}
 
 {{- define "opnc.oidc.openprojectClientSecret" -}}
-{{ .Values.oidc.clients.openproject.secret | default "openproject-secret" }}
+{{ .Values.keycloak.realm.clients.openproject.secret | default "openproject-secret" }}
 {{- end -}}
