@@ -1,0 +1,19 @@
+# Integration setup method
+# Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+integrationSetupMethod: 'sso-external'
+
+openprojectHost: openproject.local
+nextcloudHost: nextcloud.local
+keycloakHost: keycloak.local
+
+oidcProvider:
+  name: keycloak
+  openprojectClientId: openproject
+
+ingress:
+  # Ingress class name
+  className: 'nginx'
+  # TLS secret name
+  tlsSecretName: 'opnc-tls-secret'
+  # Use exisiting TLS secret name. If set, the above tlsSecretName will be ignored.
+  existingTlsSecretName: ''

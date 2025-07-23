@@ -1,0 +1,24 @@
+repositories:
+  - name: openproject
+    url: https://charts.openproject.org
+  - name: nextcloud
+    url: https://nextcloud.github.io/helm
+  - name: bitnami
+    url: oci://registry-1.docker.io/bitnamicharts
+
+releases:
+  - name: openproject
+    chart: openproject/openproject
+    version: ~10.1.2
+    values:
+      - values/op-values.gotmpl
+  - name: nextcloud
+    chart: nextcloud/nextcloud
+    version: ~7.0.0
+    values:
+      - values/nc-values.gotmpl
+  - name: keycloak
+    chart: bitnami/keycloak
+    version: ~24.7.5
+    values:
+      - values/kc-values.gotmpl

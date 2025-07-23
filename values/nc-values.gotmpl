@@ -1,0 +1,108 @@
+fullnameOverride: {{ .Values.nextcloud.fullnameOverride }}
+image:
+  # Nextcloud version image tag
+  tag: {{ .Values.nextcloud.version }}
+enableApps:
+  # Add the folloing entry for each app you want to enable
+  #   - name: 'app_name'   # Name of the app
+  #     version: ''        # [Optional] Release version of the app
+  #     gitBranch: ''      # [Optional] Git branch to use as the source
+  # NOTE: 'version' will be ignored if 'gitBranch' is set
+  - name: 'integration_openproject'
+    version: ''
+    # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+  - name: 'oidc'
+    version: ''
+    # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+  - name: 'user_oidc'
+    version: ''
+    gitBranch: ''
+  - name: 'groupfolders'
+    version: ''
+    # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+lifecycle:
+  postStartCommand:
+    - /bin/sh
+    - -c
+    - |
+      rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
+      cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
+      update-ca-certificates && \
+      /docker-entrypoint-hooks.d/presetup.sh >> /var/log/presetup.log 2>&1
+nextcloud:
+  host: {{ .Values.nextcloud.host }}
+  username: admin
+  password: admin
+  extraEnv:
+    # Git branch to use as the source
+    # NOTE: NOT WORKING YET (PERMISSIONS ISSUE)
+    # - name: NC_SERVE_GIT_BRANCH
+    #   value: ''
+    - name: OVERWRITECLIURL
+      value: https://{{ .Values.nextcloud.host }}
+    - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
+      value: {{ .Values.keycloak.realm.clients.nextcloud.id }}
+    - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET
+      value: {{ .Values.keycloak.realm.clients.nextcloud.secret }}
+    - name: OIDC_KEYCLOAK_PROVIDER_NAME
+      value: {{ .Values.keycloak.providerName }}
+    - name: OIDC_KEYCLOAK_DISCOVERY_URL
+      value: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}/.well-known/openid-configuration
+    - name: NEXTCLOUD_ENABLE_APPS
+      valueFrom:
+        configMapKeyRef:
+          name: nextcloud-enable-apps
+          key: enable-apps
+  extraVolumes:
+    - name: presetup
+      configMap:
+        name: nc-presetup-configmap
+        defaultMode: 0755
+    - name: preinstall
+      configMap:
+        name: nc-preinstall-configmap
+        defaultMode: 0755
+    - name: postinstall
+      configMap:
+        name: nc-postinstall-configmap
+        defaultMode: 0755
+    - name: ca-cert
+      secret:
+        secretName: opnc-ca-secret
+  extraVolumeMounts:
+    - name: presetup
+      mountPath: /docker-entrypoint-hooks.d/presetup.sh
+      subPath: presetup.sh
+    - name: preinstall
+      mountPath: /docker-entrypoint-hooks.d/pre-installation/preinstall.sh
+      subPath: preinstall.sh
+    - name: postinstall
+      mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
+      subPath: postinstall.sh
+    - name: ca-cert
+      mountPath: /certs
+internalDatabase:
+  enabled: false
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: {{ .Values.nextcloud.postgresql.host }}
+  user: {{ .Values.nextcloud.postgresql.username }}
+  password: {{ .Values.nextcloud.postgresql.password }}
+  database: {{ .Values.nextcloud.postgresql.database }}
+postgresql:
+  enabled: true
+  fullnameOverride: {{ .Values.nextcloud.postgresql.host }}
+  global:
+    postgresql:
+      auth:
+        username: {{ .Values.nextcloud.postgresql.username }}
+        password: {{ .Values.nextcloud.postgresql.password }}
+        database: {{ .Values.nextcloud.postgresql.database }}
+  primary:
+    podLabels:
+      app.kubernetes.io/name: {{ .Values.nextcloud.postgresql.host }}
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false

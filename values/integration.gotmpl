@@ -1,0 +1,15 @@
+# Integration setup method
+# Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+integrationSetupMethod: 'oauth2'
+
+openprojectHost: {{ .Values.openproject.host }}
+nextcloudHost: {{ .Values.nextcloud.host }}
+keycloakHost: {{ .Values.keycloak.host }}
+
+oidcProvider:
+  name: {{ .Values.keycloak.providerName }}
+  openprojectClientId: {{ .Values.keycloak.realm.clients.openproject.id }}
+
+ingress:
+  # Use exisiting TLS secret name.
+  existingTlsSecretName: {{ .Values.ingress.existingTlsSecretName }}

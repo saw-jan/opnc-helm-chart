@@ -1,0 +1,72 @@
+fullnameOverride: {{ .Values.openproject.fullnameOverride }}
+# See https://github.com/opf/helm-charts/issues/201#issuecomment-2908788062
+containerSecurityContext:
+  readOnlyRootFilesystem: false
+image:
+image:
+  tag: {{ .Values.openproject.version }}
+# TODO: currently, the container entrypoint cannot be overridden
+# See: https://github.com/opf/helm-charts/issues/215
+# NOTE: NOT WORKING YET
+# command: ['/scripts/entrypoint.sh']
+openproject:
+  https: true
+  host: {{ .Values.openproject.host }}
+  admin_user:
+    password_reset: 'false'
+  oidc:
+    enabled: true
+    displayName: {{ .Values.keycloak.providerName }}
+    identifier: {{ .Values.keycloak.realm.clients.openproject.id }}
+    secret: {{ .Values.keycloak.realm.clients.openproject.secret }}
+    authorizationEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/auth'
+    tokenEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/token'
+    userinfoEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo'
+    host: {{ .Values.keycloak.host }}
+environment:
+  OPENPROJECT_DEV_EXTRA_HOSTS: {{ .Values.openproject.host }}
+  OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'
+  OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
+  OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
+  OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}
+  OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
+  DATABASE_HOST: {{ .Values.openproject.postgresql.host }}
+  OPENPROJECT_SEED__ENTERPRISE__TOKEN: ''
+  # Git branch to use as the source
+  # NOTE: 'version' will be ignored if this is set
+  # Example: dev
+  # OP_GIT_SOURCE_BRANCH: '' - NOT WORKING YET
+dbInit:
+  resources:
+    limits:
+      memory: '1Gi'
+    requests:
+      memory: '512Mi'
+appInit:
+  resources:
+    limits:
+      memory: '1Gi'
+    requests:
+      memory: '512Mi'
+extraVolumes:
+  - name: entrypoint
+    configMap:
+      name: op-entry-configmap
+      defaultMode: 0755
+  - name: ca-cert
+    secret:
+      secretName: opnc-ca-secret
+extraVolumeMounts:
+  - name: entrypoint
+    mountPath: /scripts
+  - name: ca-cert
+    mountPath: /certs
+postgresql:
+  fullnameOverride: {{ .Values.openproject.postgresql.host }}
+  image:
+    tag: '17.5.0-debian-12-r16'
+  auth:
+    password: {{ .Values.openproject.postgresql.password }}
+  primary:
+    podLabels:
+      app.kubernetes.io/name: {{ .Values.openproject.postgresql.host }}
