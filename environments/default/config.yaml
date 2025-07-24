@@ -3,7 +3,7 @@ integration:
   setupMethod: 'oauth2'
 
 openproject:
-  version: '16'
+  version: '16.2'
   fullnameOverride: openproject
   host: openproject.local
   postgresql:
@@ -14,6 +14,24 @@ nextcloud:
   version: '31'
   fullnameOverride: nextcloud
   host: nextcloud.local
+  enableApps:
+    # Add the folloing entry for each app you want to enable
+    #   - name: 'app_name'   # Name of the app
+    #     version: ''        # [Optional] Release version of the app
+    #     gitBranch: ''      # [Optional] Git branch to use as the source
+    # NOTE: 'version' will be ignored if 'gitBranch' is set
+    - name: 'integration_openproject'
+      version: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+    - name: 'oidc'
+      version: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+    - name: 'user_oidc'
+      version: ''
+      gitBranch: ''
+    - name: 'groupfolders'
+      version: ''
+      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
   postgresql:
     host: nc-postgresql
     database: nextcloud

@@ -13,22 +13,28 @@ repositories:
     url: https://charts.bitnami.com/bitnami
 
 releases:
+  - name: opnc-integration
+    chart: ./charts/opnc-integration
+    values:
+      - values/integration.gotmpl
   - name: openproject
     chart: openproject/openproject
     version: ~10.1.2
     values:
       - values/op-values.gotmpl
+    needs:
+      - opnc-integration
   - name: nextcloud
     chart: nextcloud/nextcloud
     version: ~7.0.0
     values:
       - values/nc-values.gotmpl
+    needs:
+      - opnc-integration
   - name: keycloak
     chart: bitnami/keycloak
     version: ~24.7.5
     values:
       - values/kc-values.gotmpl
-  - name: opnc-integration
-    chart: ./charts/opnc-integration
-    values:
-      - values/integration.gotmpl
+    needs:
+      - opnc-integration

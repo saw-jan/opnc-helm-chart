@@ -4,7 +4,7 @@ service:
   ports:
     http: 8080
 image:
-  tag: {{ .Values.keycloak.version }}
+  tag: {{ .Values.keycloak.version | quote  }}
 command: ['/scripts/entrypoint.sh']
 usePasswordFiles: false
 auth:
