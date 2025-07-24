@@ -3,8 +3,7 @@ fullnameOverride: {{ .Values.openproject.fullnameOverride }}
 containerSecurityContext:
   readOnlyRootFilesystem: false
 image:
-image:
-  tag: {{ .Values.openproject.version }}
+  tag: {{ .Values.openproject.version | quote  }}
 # TODO: currently, the container entrypoint cannot be overridden
 # See: https://github.com/opf/helm-charts/issues/215
 # NOTE: NOT WORKING YET

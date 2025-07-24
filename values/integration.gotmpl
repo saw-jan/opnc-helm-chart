@@ -1,6 +1,4 @@
-# Integration setup method
-# Options: 'oauth2', 'sso-nextcloud', 'sso-external'
-integrationSetupMethod: 'oauth2'
+integrationSetupMethod: {{ .Values.integration.setupMethod }}
 
 openprojectHost: {{ .Values.openproject.host }}
 nextcloudHost: {{ .Values.nextcloud.host }}
