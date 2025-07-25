@@ -9,10 +9,6 @@ spec:
       containers:
         - name: setup-integration
           image: ddev/ddev-utilities
-          lifecycle:
-            postStart:
-              exec:
-                command: ['/bin/sh', '-c', 'cp -f /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && update-ca-certificates']
           command: ['/scripts/setup-integration.sh']
           env:
             - name: NEXTCLOUD_HOST
@@ -27,15 +23,16 @@ spec:
               value: '{{ include "opnc.oidc.providerName" . }}'
             - name: OIDC_KEYCLOAK_OPENPROJECT_CLIENT_ID
               value: '{{ include "opnc.oidc.openprojectClientId" . }}'
+            {{- include "opnc.extraEnv" . | indent 12 }}
           volumeMounts:
             - name: setup-script
               mountPath: /scripts/setup-integration.sh
               subPath: setup-integration.sh
-            {{- include "opnc.volumes.caCertVolumeMount" . | indent 12 }}
+            {{- include "opnc.volumes.extraVolumeMounts" . | indent 12 }}
 
       volumes:
         - name: setup-script
           configMap:
             name: opnc-setup-configmap
             defaultMode: 0755
-        {{- include "opnc.volumes.caCertVolume" . | indent 8 }}
+        {{- include "opnc.volumes.extraVolumes" . | indent 8 }}

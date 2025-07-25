@@ -2,15 +2,11 @@ fullnameOverride: {{ .Values.nextcloud.fullnameOverride }}
 image:
   # Nextcloud version image tag
   tag: {{ .Values.nextcloud.version | quote }}
-lifecycle:
-  postStartCommand:
-    - /bin/sh
-    - -c
-    - |
-      rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
-      cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
-      update-ca-certificates && \
-      /docker-entrypoint-hooks.d/presetup.sh >> /var/log/presetup.log 2>&1
+# lifecycle:
+#   postStartCommand:
+#     - /bin/sh
+#     - -c
+#     - /docker-entrypoint-hooks.d/presetup.sh >> /var/log/presetup.log 2>&1
 nextcloud:
   host: {{ .Values.nextcloud.host }}
   username: admin
@@ -35,6 +31,10 @@ nextcloud:
         configMapKeyRef:
           name: nextcloud-enable-apps
           key: enable-apps
+    - name: CURL_CA_BUNDLE
+      value: {{ .Values.ingress.caCertFilePath }}
+    - name: SSL_CERT_FILE
+      value: {{ .Values.ingress.caCertFilePath }}
   extraVolumes:
     - name: presetup
       configMap:
@@ -50,7 +50,7 @@ nextcloud:
         defaultMode: 0755
     - name: ca-cert
       secret:
-        secretName: opnc-ca-secret
+        secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
   extraVolumeMounts:
     - name: presetup
       mountPath: /docker-entrypoint-hooks.d/presetup.sh
@@ -62,7 +62,8 @@ nextcloud:
       mountPath: /docker-entrypoint-hooks.d/before-starting/beforestart.sh
       subPath: beforestart.sh
     - name: ca-cert
-      mountPath: /certs
+      mountPath: {{ .Values.ingress.caCertFilePath }}
+      subPath: ca.crt
 internalDatabase:
   enabled: false
 externalDatabase:

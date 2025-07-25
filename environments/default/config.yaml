@@ -56,4 +56,8 @@ keycloak:
     host: kc-postgresql
 
 ingress:
+  tlsSecretName: 'opnc-tls-secret'
+  # Use exisiting TLS secret name. If set, the above tlsSecretName will be ignored.
   existingTlsSecretName: ''
+  # path to mount the CA certificate file in the container
+  caCertFilePath: /certs/ca.crt
