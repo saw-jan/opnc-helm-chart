@@ -108,6 +108,14 @@ appInit:
     requests:
       memory: "512Mi"
 
+## @param lifecycleHooks LifecycleHooks to set additional configuration at startup
+##
+lifecycleHooks: {}
+
+## @param command Override default container command (useful when using custom images)
+##
+command: []
+
 ## Define and create Kubernetes Service.
 ##
 ## Ref.: https://kubernetes.io/docs/concepts/services-networking/ingress/
