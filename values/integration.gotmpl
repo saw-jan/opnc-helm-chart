@@ -4,10 +4,26 @@ openprojectHost: {{ .Values.openproject.host }}
 nextcloudHost: {{ .Values.nextcloud.host }}
 keycloakHost: {{ .Values.keycloak.host }}
 
+extraVolumes:
+  - name: ca-cert
+    secret:
+      secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
+
+extraVolumeMounts:
+  - name: ca-cert
+    mountPath: {{ .Values.ingress.caCertFilePath }}
+    subPath: ca.crt
+
+extraEnv:
+  - name: CURL_CA_BUNDLE
+    value: {{ .Values.ingress.caCertFilePath }}
+  - name: SSL_CERT_FILE
+    value: {{ .Values.ingress.caCertFilePath }}
+
 oidcProvider:
   name: {{ .Values.keycloak.providerName }}
   openprojectClientId: {{ .Values.keycloak.realm.clients.openproject.id }}
 
 ingress:
-  # Use exisiting TLS secret name.
+  tlsSecretName: {{ .Values.ingress.tlsSecretName }}
   existingTlsSecretName: {{ .Values.ingress.existingTlsSecretName }}

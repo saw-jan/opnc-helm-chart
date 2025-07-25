@@ -73,7 +73,7 @@ if [[ "$INTEGRATION_APP_SETUP_METHOD" == "oauth2" ]]; then
     fi
 
     INTEGRATION_SETUP_DEBUG=true \
-        SETUP_PROJECT_FOLDER='true' \
+        SETUP_PROJECT_FOLDER=true \
         NEXTCLOUD_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
@@ -93,6 +93,7 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-nextcloud" ]]; then
     sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
     INTEGRATION_SETUP_DEBUG=true \
+        SETUP_PROJECT_FOLDER=true \
         NC_INTEGRATION_PROVIDER_TYPE=nextcloud_hub \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \
@@ -121,6 +122,7 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
     sed -i 's/sort -VC/sort -Vc/g' integration_oidc_setup.sh
 
     INTEGRATION_SETUP_DEBUG=true \
+        SETUP_PROJECT_FOLDER=true \
         NC_HOST=https://$NEXTCLOUD_HOST \
         NC_ADMIN_USERNAME=admin \
         NC_ADMIN_PASSWORD=admin \

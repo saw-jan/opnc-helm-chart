@@ -51,3 +51,33 @@ OpenID Connect variables.
 {{- define "opnc.oidc.openprojectClientId" -}}
 {{ .Values.oidcProvider.openprojectClientId | default "openproject" }}
 {{- end -}}
+
+{{/*
+---------------------------------------------
+Volumes
+---------------------------------------------
+*/}}
+
+{{- define "opnc.volumes.extraVolumes" -}}
+{{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes }}
+{{- end }}
+{{- end -}}
+
+{{- define "opnc.volumes.extraVolumeMounts" -}}
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts }}
+{{- end }}
+{{- end -}}
+
+{{/*
+---------------------------------------------
+Environment variables
+---------------------------------------------
+*/}}
+
+{{- define "opnc.extraEnv" -}}
+{{- if .Values.extraEnv }}
+{{ toYaml .Values.extraEnv }}
+{{- end }}
+{{- end -}}

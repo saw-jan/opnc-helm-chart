@@ -30,6 +30,10 @@ nextcloud:
       version: ''
       # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
 
+extraVolumes: []
+extraVolumeMounts: []
+extraEnv: []
+
 ingress:
   # Ingress class name
   className: 'nginx'

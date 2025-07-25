@@ -8,16 +8,6 @@ image:
 # See: https://github.com/opf/helm-charts/issues/215
 # NOTE: NOT WORKING YET
 # command: ['/scripts/entrypoint.sh']
-lifecycleHooks:
-  postStart:
-    exec:
-      command:
-        - /bin/sh
-        - -c
-        - |
-          rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
-          cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
-          update-ca-certificates
 openproject:
   https: true
   host: {{ .Values.openproject.host }}
@@ -41,6 +31,8 @@ environment:
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
   DATABASE_HOST: {{ .Values.openproject.postgresql.host }}
   OPENPROJECT_SEED__ENTERPRISE__TOKEN: ''
+  CURL_CA_BUNDLE: {{ .Values.ingress.caCertFilePath }}
+  SSL_CERT_FILE: {{ .Values.ingress.caCertFilePath }}
   # Git branch to use as the source
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
@@ -64,13 +56,14 @@ extraVolumes:
       defaultMode: 0755
   - name: ca-cert
     secret:
-      secretName: opnc-ca-secret
+      secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
 extraVolumeMounts:
   - name: entrypoint
     mountPath: /scripts/entrypoint.sh
     subPath: entrypoint.sh
   - name: ca-cert
-    mountPath: /certs
+    mountPath: {{ .Values.ingress.caCertFilePath }}
+    subPath: ca.crt
 postgresql:
   fullnameOverride: {{ .Values.openproject.postgresql.host }}
   image:
