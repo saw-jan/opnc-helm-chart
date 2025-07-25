@@ -44,9 +44,9 @@ nextcloud:
       configMap:
         name: nc-preinstall-configmap
         defaultMode: 0755
-    - name: postinstall
+    - name: beforestart
       configMap:
-        name: nc-postinstall-configmap
+        name: nc-beforestart-configmap
         defaultMode: 0755
     - name: ca-cert
       secret:
@@ -58,9 +58,9 @@ nextcloud:
     - name: preinstall
       mountPath: /docker-entrypoint-hooks.d/pre-installation/preinstall.sh
       subPath: preinstall.sh
-    - name: postinstall
-      mountPath: /docker-entrypoint-hooks.d/post-installation/postinstall.sh
-      subPath: postinstall.sh
+    - name: beforestart
+      mountPath: /docker-entrypoint-hooks.d/before-starting/beforestart.sh
+      subPath: beforestart.sh
     - name: ca-cert
       mountPath: /certs
 internalDatabase:

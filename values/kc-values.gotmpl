@@ -34,7 +34,8 @@ extraVolumes:
       defaultMode: 0755
 extraVolumeMounts:
   - name: entrypoint
-    mountPath: /scripts
+    mountPath: /scripts/entrypoint.sh
+    subPath: entrypoint.sh
 cache:
   enabled: false
 postgresql:

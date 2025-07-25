@@ -67,7 +67,8 @@ extraVolumes:
       secretName: opnc-ca-secret
 extraVolumeMounts:
   - name: entrypoint
-    mountPath: /scripts
+    mountPath: /scripts/entrypoint.sh
+    subPath: entrypoint.sh
   - name: ca-cert
     mountPath: /certs
 postgresql:

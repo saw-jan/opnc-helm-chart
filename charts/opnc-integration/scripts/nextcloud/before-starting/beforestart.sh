@@ -77,6 +77,7 @@ done
 
 # upgrade Nextcloud apps
 $OCC upgrade
+$OCC maintenance:mode --off
 
 ###################################
 # Setup apps                      #
