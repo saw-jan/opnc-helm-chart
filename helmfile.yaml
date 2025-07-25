@@ -5,8 +5,10 @@ environments:
       - environments/default/config.yaml
 ---
 repositories:
-  - name: openproject
-    url: https://charts.openproject.org
+  # Issue: https://github.com/opf/helm-charts/issues/215
+  # NOTE: Remove local openproject and use the following once the issue is resolved:
+  # - name: openproject
+  #   url: https://charts.openproject.org
   - name: nextcloud
     url: https://nextcloud.github.io/helm
   - name: bitnami
@@ -18,12 +20,20 @@ releases:
     values:
       - values/integration.gotmpl
   - name: openproject
-    chart: openproject/openproject
-    version: ~10.1.2
+    chart: ./charts/openproject
     values:
       - values/op-values.gotmpl
     needs:
       - opnc-integration
+  # Issue: https://github.com/opf/helm-charts/issues/215
+  # NOTE: Remove local openproject and use the following once the issue is resolved:
+  # - name: openproject
+  #   chart: openproject/openproject
+  #   version: ~10.1.2
+  #   values:
+  #     - values/op-values.gotmpl
+  #   needs:
+  #     - opnc-integration
   - name: nextcloud
     chart: nextcloud/nextcloud
     version: ~7.0.0
