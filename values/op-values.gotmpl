@@ -8,14 +8,16 @@ image:
 # See: https://github.com/opf/helm-charts/issues/215
 # NOTE: NOT WORKING YET
 # command: ['/scripts/entrypoint.sh']
-lifecycle:
-  postStartCommand:
-    - /bin/sh
-    - -c
-    - |
-      rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
-      cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
-      update-ca-certificates
+lifecycleHooks:
+  postStart:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - |
+          rm -f /etc/ssl/certs/OPNC_Root_CA.pem /usr/local/share/ca-certificates/OPNC_Root_CA.crt && \
+          cp /certs/ca.crt /usr/local/share/ca-certificates/OPNC_Root_CA.crt || true && \
+          update-ca-certificates
 openproject:
   https: true
   host: {{ .Values.openproject.host }}
