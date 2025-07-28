@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Kubernetes cluster ([minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download))
+- [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
 - [Docker](https://docs.docker.com/engine/install/)
 - [Helm](https://helm.sh/docs/intro/install/#through-package-managers)
 - [Helmfile](https://helmfile.readthedocs.io/en/latest/#installation)
@@ -10,11 +10,11 @@
 
 ## Deployment Steps
 
-1. Start the Kubernetes cluster:
+1. Start a Kubernetes cluster:
    ```bash
    minikube start
    ```
-2. Enable the Ingress addon:
+2. Enable ingress addon:
 
    ```bash
    minikube addons enable ingress
