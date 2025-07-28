@@ -2,10 +2,11 @@
 
 ## Prerequisites
 
-- Kubernetes cluster (minikube)
-- Helm
-- kubectl
-- Docker
+- Kubernetes cluster ([minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download))
+- [Docker](https://docs.docker.com/engine/install/)
+- [Helm](https://helm.sh/docs/intro/install/#through-package-managers)
+- [Helmfile](https://helmfile.readthedocs.io/en/latest/#installation)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 ## Deployment Steps
 
@@ -34,10 +35,10 @@
     --set crds.enabled=true
    ```
 
-4. Install integration helm chart:
+4. Deploy integration chart:
 
    ```bash
-   helm install opnc .
+   helmfile apply
    ```
 
 5. Check the pods:
@@ -46,50 +47,25 @@
    kubectl get pods
    ```
 
+   NOTE: make sure at least one `setup-job-*` pod is completed successfully before proceeding.
+
+   ```
+   NAME                                          READY   STATUS      RESTARTS   AGE
+   setup-job-5nwlm                               0/1     Error       0          17m
+   setup-job-mkgrf                               0/1     Completed   0          12m
+   ```
+
 6. Add these hosts to your `/etc/hosts` file:
    ```
     sudo echo "$(minikube ip) openproject.local nextcloud.local keycloak.local" | sudo tee -a /etc/hosts
    ```
 
-### Using different versions
+Access the services via the following URLs:
 
-Currently, we can define the required versions for the following components:
+- OpenProject: [https://openproject.local](https://openproject.local)
+- Nextcloud: [https://nextcloud.local](https://nextcloud.local)
+- Keycloak: [https://keycloak.local](https://keycloak.local)
 
-```
-1. integration_openproject app
-2. OpenProject
-3. Nextcloud
-```
+## Configuring the Setup
 
-Please refer to [values.yaml](values.yaml) for available configuration options.
-
-Use the following command to upgrade the release:
-
-```bash
-helm upgrade opnc .
-```
-
-or (if you have separate `values.yaml` file):
-
-```bash
-helm upgrade -f <path-to-values.yaml> <path-to-opnc-repo>
-```
-
-or (set the versions directly while running the command):
-
-```bash
-helm upgrade \
-   --set openproject.version=16 \
-   opnc .
-```
-
-### Useful Commands
-
-- To see the pod logs:
-  ```bash
-  kubectl logs -f -l app=openproject
-  ```
-- To see the pod details (useful if the container is not starting):
-  ```bash
-  kubectl describe pod -l app=openproject
-  ```
+See the [environments/default/config.yaml](https://github.com/saw-jan/opnc-helm-chart/blob/master/environments/default/config.yaml) file for configuration options.
