@@ -73,3 +73,5 @@ postgresql:
   primary:
     podLabels:
       app.kubernetes.io/name: {{ .Values.openproject.postgresql.host }}
+    persistence:
+      enabled: false
