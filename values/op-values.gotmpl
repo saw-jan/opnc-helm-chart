@@ -30,7 +30,7 @@ environment:
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
   DATABASE_HOST: {{ .Values.openproject.postgresql.host }}
-  OPENPROJECT_SEED__ENTERPRISE__TOKEN: ''
+  OPENPROJECT_SEED__ENTERPRISE__TOKEN: {{ toYaml .Values.openproject.enterpriseToken | indent 2 }}
   CURL_CA_BUNDLE: {{ .Values.ingress.caCertFilePath }}
   SSL_CERT_FILE: {{ .Values.ingress.caCertFilePath }}
   # Git branch to use as the source

@@ -1,5 +1,12 @@
 integration:
-  # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
+  ############################################
+  # Integration setup                        #
+  ############################################
+  # Available options:
+  #   - oauth2
+  #   - sso-nextcloud
+  #   - sso-external
+  ############################################
   setupMethod: 'oauth2'
 
 openproject:
@@ -9,17 +16,25 @@ openproject:
   postgresql:
     host: op-postgresql
     password: openproject
+  ############################################
+  # Enterprise Token                         #
+  ############################################
+  enterpriseToken: ''
 
 nextcloud:
   version: '31'
   fullnameOverride: nextcloud
   host: nextcloud.local
   enableApps:
+    ############################################################################
+    # Nextcloud apps to enable                                                 #
+    ############################################################################
     # Add the folloing entry for each app you want to enable
     #   - name: 'app_name'   # Name of the app
     #     version: ''        # [Optional] Release version of the app
     #     gitBranch: ''      # [Optional] Git branch to use as the source
     # NOTE: 'version' will be ignored if 'gitBranch' is set
+    ############################################################################
     - name: 'integration_openproject'
       version: ''
       # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
