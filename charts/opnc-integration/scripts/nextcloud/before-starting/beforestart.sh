@@ -83,6 +83,9 @@ $OCC maintenance:mode --off
 # Setup apps                      #
 ###################################
 $OCC security:certificates:import /etc/ssl/certs/ca-certificates.crt
+$OCC security:certificates:import "$SSL_CERT_FILE"
+# allow local remote servers
+$OCC config:system:set allow_local_remote_servers --value 1
 # setup user_oidc app
 $OCC config:app:set --value=1 user_oidc store_login_token
 $OCC config:system:set user_oidc --type boolean --value="true" oidc_provider_bearer_validation

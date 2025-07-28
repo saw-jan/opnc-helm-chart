@@ -16,8 +16,8 @@ nextcloud:
     # NOTE: NOT WORKING YET (PERMISSIONS ISSUE)
     # - name: NC_SERVE_GIT_BRANCH
     #   value: ''
-    - name: OVERWRITECLIURL
-      value: https://{{ .Values.nextcloud.host }}
+    - name: OVERWRITEPROTOCOL
+      value: https
     - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
       value: {{ .Values.keycloak.realm.clients.nextcloud.id }}
     - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET

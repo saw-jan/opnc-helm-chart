@@ -4,6 +4,10 @@ openprojectHost: {{ .Values.openproject.host }}
 nextcloudHost: {{ .Values.nextcloud.host }}
 keycloakHost: {{ .Values.keycloak.host }}
 
+nextcloud:
+  enableApps:
+  {{ toYaml .Values.nextcloud.enableApps | nindent 4 }}
+
 extraVolumes:
   - name: ca-cert
     secret:
