@@ -37,18 +37,6 @@ environment:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   # OP_GIT_SOURCE_BRANCH: '' - NOT WORKING YET
-dbInit:
-  resources:
-    limits:
-      memory: '1Gi'
-    requests:
-      memory: '512Mi'
-appInit:
-  resources:
-    limits:
-      memory: '1Gi'
-    requests:
-      memory: '512Mi'
 extraVolumes:
   - name: entrypoint
     configMap:
