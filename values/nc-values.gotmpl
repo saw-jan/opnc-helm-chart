@@ -18,6 +18,8 @@ nextcloud:
     #   value: ''
     - name: OVERWRITEPROTOCOL
       value: https
+    - name: OVERWRITECLIURL
+      value: https://{{ .Values.nextcloud.host }}
     - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_ID
       value: {{ .Values.keycloak.realm.clients.nextcloud.id }}
     - name: OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET

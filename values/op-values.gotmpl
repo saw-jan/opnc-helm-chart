@@ -30,6 +30,7 @@ environment:
   OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
   OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}
+  OPENPROJECT_OPENID__CONNECT_KEYCLOAK_JWKS__URI: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/certs
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
   DATABASE_HOST: {{ .Values.openproject.postgresql.host }}
   OPENPROJECT_SEED__ENTERPRISE__TOKEN: {{ toYaml .Values.openproject.enterpriseToken | indent 2 }}
