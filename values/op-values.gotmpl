@@ -23,6 +23,8 @@ openproject:
     userinfoEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo'
     host: {{ .Values.keycloak.host }}
 environment:
+  OPENPROJECT_LOG__LEVEL: error
+  OPENPROJECT_EDITION: standard
   OPENPROJECT_DEV_EXTRA_HOSTS: {{ .Values.openproject.host }}
   OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'
   OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
@@ -37,6 +39,25 @@ environment:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   # OP_GIT_SOURCE_BRANCH: '' - NOT WORKING YET
+  # OP_GIT_SOURCE_BRANCH: 'stable/16'
+dbInit:
+  resources:
+    limits:
+      memory: '512Mi'
+    requests:
+      memory: '512Mi'
+appInit:
+  resources:
+    limits:
+      memory: '1Gi'
+    requests:
+      memory: '512Mi'
+seederJob:
+  resources:
+    limits:
+      memory: '1Gi'
+    requests:
+      memory: '512Mi'
 extraVolumes:
   - name: entrypoint
     configMap:

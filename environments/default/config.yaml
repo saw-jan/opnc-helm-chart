@@ -7,7 +7,7 @@ integration:
   #   - sso-nextcloud
   #   - sso-external
   ############################################
-  setupMethod: 'oauth2'
+  setupMethod: 'sso-external'
 
 openproject:
   version: '16.2'
