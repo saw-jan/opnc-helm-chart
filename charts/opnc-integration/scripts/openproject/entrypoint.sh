@@ -6,7 +6,7 @@ cd "$APP_PATH"
 
 if [[ -n "$OP_GIT_SOURCE_BRANCH" ]]; then
     while [[ ! -f "$APP_PATH/gitsource-build-completed" ]]; do
-        echo "Waiting build from git source to complete..."
+        echo "[INFO] Waiting build from git source to complete..."
         sleep 10
     done
     bash ./docker/prod/setup/postinstall-common.sh

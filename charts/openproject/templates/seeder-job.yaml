@@ -60,6 +60,7 @@ spec:
             {{- toYaml .Values.dbInit.resources | nindent 12 }}
           volumeMounts:
             {{- include "openproject.tmpVolumeMounts" . | indent 12 }}
+            {{- include "openproject.extraVolumeMounts" . | indent 12 }}
           {{- include "openproject.containerSecurityContext" . | indent 10 }}
       containers:
         - name: seeder
