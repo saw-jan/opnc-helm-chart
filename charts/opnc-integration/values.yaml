@@ -30,6 +30,13 @@ nextcloud:
       version: ''
       # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
 
+openproject:
+  # Git branch to use as the source
+  # NOTE: 'version' will be ignored if this is set
+  # Example: dev
+  gitSourceBranch: ''
+  dockerTag: ''
+
 extraVolumes: []
 extraVolumeMounts: []
 extraEnv: []

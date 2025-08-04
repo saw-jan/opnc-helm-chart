@@ -1,7 +1,17 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: op-entry-configmap
 data:
   entrypoint.sh: |
-{{ .Files.Get "scripts/openproject.sh" | indent 4 }}
+{{ .Files.Get "scripts/openproject/entrypoint.sh" | indent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: op-gitsource-configmap
+data:
+  setup-op-git.sh: |
+{{ .Files.Get "scripts/openproject/setup-op-git.sh" | indent 4 }}

@@ -4,10 +4,7 @@ containerSecurityContext:
   readOnlyRootFilesystem: false
 image:
   tag: {{ .Values.openproject.version | quote  }}
-# TODO: currently, the container entrypoint cannot be overridden
-# See: https://github.com/opf/helm-charts/issues/215
-# NOTE: NOT WORKING YET
-# command: ['/scripts/entrypoint.sh']
+command: ['/scripts/entrypoint.sh']
 openproject:
   https: true
   host: {{ .Values.openproject.host }}
@@ -36,11 +33,10 @@ environment:
   OPENPROJECT_SEED__ENTERPRISE__TOKEN: {{ toYaml .Values.openproject.enterpriseToken | indent 2 }}
   CURL_CA_BUNDLE: {{ .Values.ingress.caCertFilePath }}
   SSL_CERT_FILE: {{ .Values.ingress.caCertFilePath }}
-  # Git branch to use as the source
-  # NOTE: 'version' will be ignored if this is set
-  # Example: dev
-  # OP_GIT_SOURCE_BRANCH: '' - NOT WORKING YET
-  # OP_GIT_SOURCE_BRANCH: 'stable/16'
+  OP_GIT_SOURCE_BRANCH: {{ .Values.openproject.gitSourceBranch | quote }}
+  {{ if .Values.openproject.gitSourceBranch }}
+  APP_PATH: {{ .Values.openproject.gitSourcePath | quote }}
+  {{ end }}
 dbInit:
   resources:
     limits:
@@ -48,6 +44,7 @@ dbInit:
     requests:
       memory: '512Mi'
 appInit:
+  command: ['/scripts/entrypoint.sh']
   resources:
     limits:
       memory: '1Gi'
@@ -67,6 +64,11 @@ extraVolumes:
   - name: ca-cert
     secret:
       secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
+  {{ if .Values.openproject.gitSourceBranch }}
+  - name: op-git-source
+    persistentVolumeClaim:
+      claimName: op-gitsource-pvc
+  {{ end }}
 extraVolumeMounts:
   - name: entrypoint
     mountPath: /scripts/entrypoint.sh
@@ -74,6 +76,10 @@ extraVolumeMounts:
   - name: ca-cert
     mountPath: {{ .Values.ingress.caCertFilePath }}
     subPath: ca.crt
+  {{ if .Values.openproject.gitSourceBranch }}
+  - name: op-git-source
+    mountPath: {{ .Values.openproject.gitSourcePath | quote }}
+  {{ end }}
 postgresql:
   fullnameOverride: {{ .Values.openproject.postgresql.host }}
   image:

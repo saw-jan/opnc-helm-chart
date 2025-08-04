@@ -10,9 +10,26 @@ integration:
   setupMethod: 'sso-external'
 
 openproject:
-  version: '16.2'
   fullnameOverride: openproject
   host: openproject.local
+  #####################################################
+  # Pod container image tag                           #
+  # Examples: 16.2, dev                               #
+  # NOTE: you might also need to change the image tag #
+  #   to get the proper ruby version                  #
+  #   if you are using 'gitSourceBranch'              #
+  #####################################################
+  version: '16.2'
+  ############################################
+  # Git branch to use as the source          #
+  # Example: dev                             #
+  ############################################
+  gitSourceBranch: ''
+  ####################################################
+  # Path to map cloned OpenProject source inside pod #
+  # NOTE: this will server as APP_PATH               #
+  ####################################################
+  gitSourcePath: '/home/app/gitapp'
   postgresql:
     host: op-postgresql
     password: openproject
