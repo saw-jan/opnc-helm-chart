@@ -62,6 +62,9 @@ spec:
             {{- include "openproject.envFrom" . | nindent 12 }}
           env:
             {{- include "openproject.env" . | nindent 12 }}
+          {{- if .Values.appInit.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.appInit.command "context" $) | nindent 12 }}
+          {{- end }}
           args:
             - /app/docker/prod/wait-for-db
           resources:

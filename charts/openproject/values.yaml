@@ -66,6 +66,9 @@ clusterDomain: "cluster.local"
 ## Define settings for check-db-ready init-container
 #
 dbInit:
+  ## @param command Override default container command
+  ##
+  command: []
   image:
     ## Define docker registry address.
     #
@@ -102,6 +105,9 @@ dbInit:
 # These containers need access to the Rails stack and wait for the database to be ready
 # (i.e., the seeder and migration job to have completed)
 appInit:
+  ## @param command Override default container command
+  ##
+  command: []
   resources:
     limits:
       memory: "512Mi"
