@@ -8,6 +8,10 @@ nextcloud:
   enableApps:
   {{ toYaml .Values.nextcloud.enableApps | nindent 4 }}
 
+openproject:
+  dockerTag: {{ .Values.openproject.version | quote }}
+  gitSourceBranch: {{ .Values.openproject.gitSourceBranch | quote }}
+
 extraVolumes:
   - name: ca-cert
     secret:

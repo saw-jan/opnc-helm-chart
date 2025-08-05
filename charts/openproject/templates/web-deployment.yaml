@@ -62,12 +62,16 @@ spec:
             {{- include "openproject.envFrom" . | nindent 12 }}
           env:
             {{- include "openproject.env" . | nindent 12 }}
+          {{- if .Values.appInit.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.appInit.command "context" $) | nindent 12 }}
+          {{- end }}
           args:
             - /app/docker/prod/wait-for-db
           resources:
             {{- toYaml .Values.appInit.resources | nindent 12 }}
           volumeMounts:
             {{- include "openproject.tmpVolumeMounts" . | indent 12 }}
+            {{- include "openproject.extraVolumeMounts" . | indent 12 }}
       containers:
         - name: "openproject"
           {{- include "openproject.containerSecurityContext" . | indent 10 }}

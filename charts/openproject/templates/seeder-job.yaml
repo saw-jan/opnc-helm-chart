@@ -53,10 +53,14 @@ spec:
             {{- include "openproject.envFrom" . | nindent 12 }}
           env:
             {{- include "openproject.env" . | nindent 12 }}
+          {{- if .Values.dbInit.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.dbInit.command "context" $) | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.dbInit.resources | nindent 12 }}
           volumeMounts:
             {{- include "openproject.tmpVolumeMounts" . | indent 12 }}
+            {{- include "openproject.extraVolumeMounts" . | indent 12 }}
           {{- include "openproject.containerSecurityContext" . | indent 10 }}
       containers:
         - name: seeder
