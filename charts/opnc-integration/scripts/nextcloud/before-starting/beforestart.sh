@@ -13,32 +13,25 @@ OLD_IFS=$IFS
 NEXTCLOUD_ENABLE_APPS=$(echo "$NEXTCLOUD_ENABLE_APPS" | xargs)
 for app in $NEXTCLOUD_ENABLE_APPS; do
     IFS="@" read -r app_name app_version <<<"$app"
-    IFS=$OLD_IFS
 
     APP_DIR="custom_apps/$app_name"
 
     $OCC app:disable "$app_name"
-    rm -rf "$APP_DIR" || true
 
     GIT_REPO_URL="https://github.com/nextcloud/$app_name"
     if [[ "$app_name" == "oidc" ]]; then
         GIT_REPO_URL="https://github.com/H2CK/$app_name"
+    elif [[ $(curl -s -XHEAD -w "%{http_code}" "https://github.com/nextcloud-releases/$app_name") == 200 ]]; then
+        GIT_REPO_URL="https://github.com/nextcloud-releases/$app_name"
     fi
 
     if [[ -z "$app_version" ]]; then
         echo "[INFO] Enabling app '$app_name': latest"
     elif [[ "$app_version" =~ "git="* ]]; then
-        mkdir -p "$APP_DIR"
-        # extract the branch name
         app_branch=${app_version#git=}
         echo "[INFO] Enabling app '$app_name': '$app_branch' branch"
-
-        curl -sL "${GIT_REPO_URL}/archive/refs/heads/${app_branch}.tar.gz" | tar -xz -C "$APP_DIR" --strip-components=1
-
-        cd "$APP_DIR"
-        composer install --no-dev
-        npm ci && npm run dev
     else
+        rm -rf "$APP_DIR" || true
         mkdir -p "$APP_DIR"
         # remove 'v' prefix if exists
         provided_app_version=$app_version
@@ -72,8 +65,9 @@ for app in $NEXTCLOUD_ENABLE_APPS; do
 
     cd "$WORKING_DIR"
     # enable the app
-    $OCC app:enable "$app_name"
+    $OCC app:enable -f "$app_name"
 done
+IFS=$OLD_IFS
 
 # upgrade Nextcloud apps
 $OCC upgrade

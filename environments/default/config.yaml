@@ -39,7 +39,16 @@ openproject:
   enterpriseToken: ''
 
 nextcloud:
+  ############################################
+  # Pod container image tag                  #
+  # Examples: 30, 31                         #
+  ############################################
   version: '31'
+  ############################################
+  # Git branch to use as the source          #
+  # Example: master                          #
+  ############################################
+  gitSourceBranch: ''
   fullnameOverride: nextcloud
   host: nextcloud.local
   enableApps:
@@ -54,16 +63,16 @@ nextcloud:
     ############################################################################
     - name: 'integration_openproject'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
     - name: 'oidc'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
     - name: 'user_oidc'
       version: ''
       gitBranch: ''
     - name: 'groupfolders'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
   postgresql:
     host: nc-postgresql
     database: nextcloud

@@ -2,19 +2,19 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nc-presetup-configmap
+  name: nc-entrypoint-configmap
 data:
-  presetup.sh: |
-{{ .Files.Get "scripts/nextcloud/presetup.sh" | indent 4 }}
+  entrypoint.sh: |
+{{ .Files.Get "scripts/nextcloud/entrypoint.sh" | indent 4 }}
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nc-preinstall-configmap
+  name: nc-presetup-configmap
 data:
-  preinstall.sh: |
-{{ .Files.Get "scripts/nextcloud/pre-installation/preinstall.sh" | indent 4 }}
+  presetup.sh: |
+{{ .Files.Get "scripts/nextcloud/presetup.sh" | indent 4 }}
 
 ---
 apiVersion: v1
