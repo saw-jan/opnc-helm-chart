@@ -1,0 +1,65 @@
+#!/bin/bash
+
+do_full_teardown=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --all)
+            # option to delete the minikube k8s cluster
+            do_full_teardown=true
+            # confirmation prompt
+            echo -e "[WARNING] You are about to delete the minikube cluster. This will remove all resources in the cluster.\nAre you sure? (y/N): "
+            read -r confirm
+            if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+                echo "[INFO] Aborting full teardown."
+                exit 0
+            fi
+            shift
+            ;;
+        *)
+            echo "[ERROR] Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
+if [[ $do_full_teardown == true ]]; then
+    echo "[INFO] Deleting cluster..."
+    minikube delete
+else
+    # Go to project root
+    # shellcheck disable=SC2164
+    cd "$(dirname "$0")/.."
+
+    # Delete helm releases
+    echo "[INFO] Deleting helm releases..."
+    helmfile destroy
+
+    ###################################
+    # Check pods and pvcs termination #
+    ###################################
+    wait_timeout="60s"
+    namespace="opnc-integration"
+
+    echo "[INFO] Waiting for pods to terminate..."
+    wait_pods="kubectl wait --for=delete pod --namespace=$namespace --all --timeout=$wait_timeout"
+    if ! $wait_pods; then
+        echo "[ERROR] Some pods did not terminate in time. Waiting again..."
+        $wait_pods
+    fi
+
+    echo "[INFO] Waiting for persistent volumes to be deleted..."
+    wait_pvc="kubectl wait --for=delete pvc --namespace=$namespace --all --timeout=$wait_timeout"
+    if ! $wait_pvc; then
+        echo "[ERROR] Some persistent volume claims did not terminate in time. Deleting..."
+        kubectl delete pvc --namespace=$namespace --all
+    fi
+
+    wait_pv="kubectl wait --for=delete pv --namespace=$namespace --all --timeout=$wait_timeout"
+    if ! $wait_pv; then
+        echo "[ERROR] Some persistent volumes did not terminate in time. Deleting..."
+        kubectl delete pv --namespace=$namespace --all
+    fi
+fi
+
+echo "[INFO] Teardown completed successfully."
