@@ -1,12 +1,12 @@
 # Openproject-Nextcloud Integration Helm Chart
 
-- [Prerequisites](#prerequisites)
-- [Deploy Setup](#deploy-setup)
+- [Dependencies](#dependencies)
+- [Deploy Setup Locally (Minikube)](#deploy-setup-locally-minikube)
 - [Configuring the Setup](#configuring-the-setup)
 - [Serve From Git Branch](#server-from-git-branch)
 - [Trust Self-Signed Certificates](#trust-self-signed-certificates)
 
-## Prerequisites
+## Dependencies
 
 - [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
 - [docker](https://docs.docker.com/engine/install/)
@@ -14,58 +14,40 @@
 - [helm-diff](https://github.com/databus23/helm-diff?tab=readme-ov-file#using-helm-plugin-manager--23x) plugin
 - [helmfile](https://helmfile.readthedocs.io/en/latest/#installation)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [make](https://sp21.datastructur.es/materials/guides/make-install.html)
 
-## Deploy Setup
+## Deploy Setup Locally (Minikube)
 
-1. Start a Kubernetes cluster:
-   ```bash
-   minikube start
-   ```
-2. Enable ingress addon:
+1. Setup Kubernetes cluster and necessary resources:
 
    ```bash
-   minikube addons enable ingress
+   make setup
    ```
 
-3. Install cert-manager CRDs and controller:
+2. Deploy the integration chart:
 
    ```bash
-   # add repository
-   helm repo add jetstack https://charts.jetstack.io
-
-   # install cert-manager
-   helm install \
-    cert-manager jetstack/cert-manager \
-    --namespace cert-manager \
-    --create-namespace \
-    --version v1.18.0 \
-    --set crds.enabled=true
+   make deploy
    ```
 
-4. Deploy integration chart:
+3. Check the pods:
 
    ```bash
-   helmfile apply
+   kubectl get pods -n opnc-integration
    ```
 
-5. Check the pods:
-
+4. Add these hosts to your `/etc/hosts` file:
    ```bash
-   kubectl get pods
-   ```
-
-   NOTE: make sure at least one `setup-job-*` pod is completed successfully before proceeding.
-
-   ```
-   NAME                                          READY   STATUS      RESTARTS   AGE
-   setup-job-5nwlm                               0/1     Error       0          17m
-   setup-job-mkgrf                               0/1     Completed   0          12m
-   ```
-
-6. Add these hosts to your `/etc/hosts` file:
-   ```
     sudo echo "$(minikube ip) openproject.local nextcloud.local keycloak.local" | sudo tee -a /etc/hosts
    ```
+
+NOTE: make sure at least one `setup-job-*` pod is completed successfully before proceeding.
+
+```bash
+NAME                                          READY   STATUS      RESTARTS   AGE
+setup-job-5nwlm                               0/1     Error       0          17m
+setup-job-mkgrf                               0/1     Completed   0          12m
+```
 
 Access the services via the following URLs:
 
@@ -76,14 +58,13 @@ Access the services via the following URLs:
 To uninstall the deployment, run:
 
 ```bash
-helmfile destroy
+make teardown
 ```
 
-NOTE: Make sure that all the volumes are deleted after the uninstallation. If not, you can manually delete them using:
+or if you want to delete the K8s cluster as well, run:
 
 ```bash
-kubectl delete pvc --all
-kubectl delete pv --all
+make teardown-all
 ```
 
 ## Configuring the Setup
