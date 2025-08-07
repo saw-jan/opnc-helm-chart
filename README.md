@@ -73,17 +73,42 @@ Access the services via the following URLs:
 - Nextcloud: [https://nextcloud.local](https://nextcloud.local)
 - Keycloak: [https://keycloak.local](https://keycloak.local)
 
+To uninstall the deployment, run:
+
+```bash
+helmfile destroy
+```
+
+NOTE: Make sure that all the volumes are deleted after the uninstallation. If not, you can manually delete them using:
+
+```bash
+kubectl delete pvc --all
+kubectl delete pv --all
+```
+
 ## Configuring the Setup
 
 See the [environments/default/config.yaml](https://github.com/saw-jan/opnc-helm-chart/blob/master/environments/default/config.yaml) file for configuration options.
 
 ## Serve From Git Branch
 
-You can serve the OpenProject server using a specific git branch. Set the following config in the [config.yaml](./environments/default/config.yaml) file:
+You can serve the OpenProject and Nextcloud servers using a specific git branch. Set the following config in the [config.yaml](./environments/default/config.yaml) file:
 
 ```yaml
 openproject:
   gitSourceBranch: '<git-branch-name>'
+
+nextcloud:
+  gitSourceBranch: '<git-branch-name>'
+```
+
+Similarly, you can enable Nextcloud apps using a specific git branch:
+
+```yaml
+nextcloud:
+  enableApps:
+    - name: 'app_name'
+      gitBranch: '<app-git-branch>'
 ```
 
 _**NOTE**: This can take a long time to build the source code and deploy the application._
