@@ -196,10 +196,17 @@ if expr "$1" : "apache" 1>/dev/null || [ "$1" = "php-fpm" ] || [ "${NEXTCLOUD_UP
                 rsync_options="-rlD"
             fi
 
+            echo "[INFO] Copying server files..."
+
             rsync $rsync_options --delete --exclude-from=/upgrade.exclude "$SRC_DIR/" /var/www/html/
             for dir in config data custom_apps themes; do
                 if [ ! -d "/var/www/html/$dir" ] || directory_empty "/var/www/html/$dir"; then
-                    rsync $rsync_options --include "/$dir/" --exclude '/*' "$SRC_DIR/" /var/www/html/
+                    config_src_dir="$SRC_DIR"
+                    # '/usr/src/nextcloud/config' has the required config files
+                    if [ "$dir" = "config" ]; then
+                        config_src_dir="/usr/src/nextcloud"
+                    fi
+                    rsync $rsync_options --include "/$dir/" --exclude '/*' "$config_src_dir/" /var/www/html/
                 fi
             done
             rsync $rsync_options --include '/version.php' --exclude '/*' "$SRC_DIR/" /var/www/html/
@@ -207,6 +214,7 @@ if expr "$1" : "apache" 1>/dev/null || [ "$1" = "php-fpm" ] || [ "${NEXTCLOUD_UP
             # /usr/src/nc/custom_apps holds the apps built from git sources
             # copy custom apps if they exist
             if [ -n "$(ls -A /usr/src/nc/custom_apps)" ]; then
+                echo "[INFO] Copying custom apps..."
                 rsync $rsync_options --delete --include '/custom_apps/' --exclude '/*' "/usr/src/nc/" /var/www/html/
             fi
 

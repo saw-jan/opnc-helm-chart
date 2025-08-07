@@ -46,7 +46,7 @@ nextcloud:
   version: '31'
   ############################################
   # Git branch to use as the source          #
-  # Example: master                          #
+  # Example: master, stable30                #
   ############################################
   gitSourceBranch: ''
   fullnameOverride: nextcloud

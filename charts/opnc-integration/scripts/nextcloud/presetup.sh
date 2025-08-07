@@ -31,20 +31,24 @@ if ! build_app_from_git && [[ -z "$NC_GIT_SOURCE_BRANCH" ]]; then
     exit 0
 fi
 
+SRC_DIR=/usr/src/nc
+# skip source build if the directory already exists and is not empty
+if [[ -n $(ls -A "$SRC_DIR") ]]; then
+    echo "[INFO] '$SRC_DIR' exists and is not empty. Skipping source build..."
+    exit 0
+fi
+
 # install php
 apt-get update > /dev/null && apt-get install -y php-cli > /dev/null
 # install composer
 curl -sSL https://getcomposer.org/download/2.8.10/composer.phar -o /usr/bin/composer
 chmod +x /usr/bin/composer
 
-SRC_DIR=/usr/src/nc
-if [[ -n $(ls -A "$SRC_DIR") ]]; then
-    echo "[INFO] '$SRC_DIR' exists and is not empty. Skipping source build..."
-    exit 0
-fi
-
 mkdir -p $SRC_DIR
 
+####################################################
+# clone nextcloud branch and build it if specified #
+####################################################
 if [[ -n "$NC_GIT_SOURCE_BRANCH" ]]; then
     set -x
     echo "[INFO] Cloning Nextcloud from branch: $NC_GIT_SOURCE_BRANCH"
@@ -60,7 +64,10 @@ if [[ -n "$NC_GIT_SOURCE_BRANCH" ]]; then
     set +x
 fi
 
-# build apps from git sources if specified
+####################################################
+# build apps from git sources if specified         #
+####################################################
+echo "[INFO] Enabling Nextcloud apps: $BUILD_GIT_APPS"
 for app in $BUILD_GIT_APPS; do
     IFS="@" read -r app_name app_version <<<"$app"
 

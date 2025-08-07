@@ -16,8 +16,6 @@ for app in $NEXTCLOUD_ENABLE_APPS; do
 
     APP_DIR="custom_apps/$app_name"
 
-    $OCC app:disable "$app_name"
-
     GIT_REPO_URL="https://github.com/nextcloud/$app_name"
     if [[ "$app_name" == "oidc" ]]; then
         GIT_REPO_URL="https://github.com/H2CK/$app_name"
@@ -26,11 +24,14 @@ for app in $NEXTCLOUD_ENABLE_APPS; do
     fi
 
     if [[ -z "$app_version" ]]; then
+        $OCC app:disable "$app_name"
+        rm -rf "$APP_DIR" || true
         echo "[INFO] Enabling app '$app_name': latest"
     elif [[ "$app_version" =~ "git="* ]]; then
         app_branch=${app_version#git=}
         echo "[INFO] Enabling app '$app_name': '$app_branch' branch"
     else
+        $OCC app:disable "$app_name"
         rm -rf "$APP_DIR" || true
         mkdir -p "$APP_DIR"
         # remove 'v' prefix if exists
