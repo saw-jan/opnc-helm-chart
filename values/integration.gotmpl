@@ -15,7 +15,7 @@ openproject:
 extraVolumes:
   - name: ca-cert
     secret:
-      secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
+      secretName: {{ or .Values.ingress.existingTlsSecretName .Values.ingress.tlsSecretName }}
 
 extraVolumeMounts:
   - name: ca-cert

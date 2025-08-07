@@ -2,20 +2,31 @@ fullnameOverride: {{ .Values.nextcloud.fullnameOverride }}
 image:
   # Nextcloud version image tag
   tag: {{ .Values.nextcloud.version | quote }}
-# lifecycle:
-#   postStartCommand:
-#     - /bin/sh
-#     - -c
-#     - /docker-entrypoint-hooks.d/presetup.sh >> /var/log/presetup.log 2>&1
 nextcloud:
   host: {{ .Values.nextcloud.host }}
   username: admin
   password: admin
+  extraInitContainers:
+    - name: presetup
+      image: node:22
+      command: ["/docker-entrypoint-hooks.d/presetup.sh"]
+      env:
+        - name: NC_GIT_SOURCE_BRANCH
+          value: {{ .Values.nextcloud.gitSourceBranch | quote }}
+        - name: NEXTCLOUD_ENABLE_APPS
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud-enable-apps
+              key: enable-apps
+      volumeMounts:
+        - name: presetup
+          mountPath: /docker-entrypoint-hooks.d/presetup.sh
+          subPath: presetup.sh
+        - name: op-git-source
+          mountPath: /usr/src/nc
   extraEnv:
-    # Git branch to use as the source
-    # NOTE: NOT WORKING YET (PERMISSIONS ISSUE)
-    # - name: NC_SERVE_GIT_BRANCH
-    #   value: ''
+    - name: NC_GIT_SOURCE_BRANCH
+      value: {{ .Values.nextcloud.gitSourceBranch | quote }}
     - name: OVERWRITEPROTOCOL
       value: https
     - name: OVERWRITECLIURL
@@ -42,10 +53,6 @@ nextcloud:
       configMap:
         name: nc-presetup-configmap
         defaultMode: 0755
-    - name: preinstall
-      configMap:
-        name: nc-preinstall-configmap
-        defaultMode: 0755
     - name: beforestart
       configMap:
         name: nc-beforestart-configmap
@@ -53,19 +60,28 @@ nextcloud:
     - name: ca-cert
       secret:
         secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
+    - name: entrypoint
+      configMap:
+        name: nc-entrypoint-configmap
+        defaultMode: 0755
+    - name: op-git-source
+      persistentVolumeClaim:
+        claimName: nc-gitsource-pvc
   extraVolumeMounts:
     - name: presetup
       mountPath: /docker-entrypoint-hooks.d/presetup.sh
       subPath: presetup.sh
-    - name: preinstall
-      mountPath: /docker-entrypoint-hooks.d/pre-installation/preinstall.sh
-      subPath: preinstall.sh
     - name: beforestart
       mountPath: /docker-entrypoint-hooks.d/before-starting/beforestart.sh
       subPath: beforestart.sh
     - name: ca-cert
       mountPath: {{ .Values.ingress.caCertFilePath }}
       subPath: ca.crt
+    - name: entrypoint
+      mountPath: /entrypoint.sh
+      subPath: entrypoint.sh
+    - name: op-git-source
+      mountPath: /usr/src/nc
 internalDatabase:
   enabled: false
 externalDatabase:
