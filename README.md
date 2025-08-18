@@ -101,7 +101,7 @@ If you are using self-signed certificates, you may need to trust them in your br
 1. Get the certificate from the cluster:
 
    ```bash
-   kubectl get secret opnc-ca-secret -o jsonpath='{.data.ca\.crt}' | base64 -d > opnc-root-ca.crt
+   kubectl get secret opnc-ca-secret -n opnc-integration -o jsonpath='{.data.ca\.crt}' | base64 -d > opnc-root-ca.crt
    ```
 
 2. Import the certificate:
