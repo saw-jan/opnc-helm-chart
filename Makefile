@@ -10,6 +10,7 @@ help:
 setup:
 	@minikube start
 	@minikube addons enable ingress
+	@echo "Installing cert manager..."
 	@helm install \
 		cert-manager cert-manager --repo https://charts.jetstack.io \
 		--namespace cert-manager \

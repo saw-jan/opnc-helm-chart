@@ -19,16 +19,16 @@ nextcloud:
     # NOTE: 'version' will be ignored if 'gitBranch' is set
     - name: 'integration_openproject'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
     - name: 'oidc'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
     - name: 'user_oidc'
       version: ''
       gitBranch: ''
     - name: 'groupfolders'
       version: ''
-      # gitBranch: '' - NOT WORKING YET (PERMISSIONS ISSUE)
+      gitBranch: ''
 
 openproject:
   # Git branch to use as the source
