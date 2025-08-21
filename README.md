@@ -24,6 +24,12 @@
    make setup
    ```
 
+   If you need to specify cluster resources:
+
+   ```bash
+   make setup cpu=4 memory=8g
+   ```
+
 2. Deploy the integration chart:
 
    ```bash
@@ -82,7 +88,8 @@ To change the version of the `integration_openproject` app in Nextcloud:
 nextcloud:
   extraApps:
     - name: integration_openproject
-      version: "2.8.1"
+      version: '2.8.1'
+```
 
 ## Serve From Git Branch
 
