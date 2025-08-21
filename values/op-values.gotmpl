@@ -20,7 +20,7 @@ openproject:
     userinfoEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo'
     host: {{ .Values.keycloak.host }}
 environment:
-  OPENPROJECT_LOG__LEVEL: error
+  OPENPROJECT_LOG__LEVEL: info
   OPENPROJECT_EDITION: standard
   OPENPROJECT_DEV_EXTRA_HOSTS: {{ .Values.openproject.host }}
   OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'

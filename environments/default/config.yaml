@@ -7,7 +7,7 @@ integration:
   #   - sso-nextcloud
   #   - sso-external
   ############################################
-  setupMethod: 'sso-external'
+  setupMethod: 'oauth2'
 
 openproject:
   fullnameOverride: openproject
@@ -19,7 +19,7 @@ openproject:
   #   to get the proper ruby version                  #
   #   if you are using 'gitSourceBranch'              #
   #####################################################
-  version: '16.2'
+  version: '16'
   ############################################
   # Git branch to use as the source          #
   # Example: dev                             #
