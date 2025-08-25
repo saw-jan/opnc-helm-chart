@@ -11,7 +11,7 @@ integration:
 
 openproject:
   fullnameOverride: openproject
-  host: openproject.local
+  host: openproject.test
   #####################################################
   # Pod container image tag                           #
   # Examples: 16.2, dev                               #
@@ -50,7 +50,7 @@ nextcloud:
   ############################################
   gitSourceBranch: ''
   fullnameOverride: nextcloud
-  host: nextcloud.local
+  host: nextcloud.test
   enableApps:
     ############################################################################
     # Nextcloud apps to enable                                                 #
@@ -82,7 +82,7 @@ nextcloud:
 keycloak:
   version: '26.2.5'
   fullnameOverride: keycloak
-  host: keycloak.local
+  host: keycloak.test
   providerName: keycloak
   realm:
     name: opnc

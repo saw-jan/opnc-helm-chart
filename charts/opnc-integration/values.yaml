@@ -2,9 +2,9 @@
 # Options: 'oauth2', 'sso-nextcloud', 'sso-external'
 integrationSetupMethod: 'sso-external'
 
-openprojectHost: openproject.local
-nextcloudHost: nextcloud.local
-keycloakHost: keycloak.local
+openprojectHost: openproject.test
+nextcloudHost: nextcloud.test
+keycloakHost: keycloak.test
 
 oidcProvider:
   name: keycloak

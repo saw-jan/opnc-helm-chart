@@ -5,15 +5,15 @@ Host name of the servers used in the stack.
 */}}
 
 {{- define "opnc.openprojectHost" -}}
-{{ .Values.openprojectHost | default "openproject.local" }}
+{{ .Values.openprojectHost | default "openproject.test" }}
 {{- end -}}
 
 {{- define "opnc.nextcloudHost" -}}
-{{ .Values.nextcloudHost | default "nextcloud.local" }}
+{{ .Values.nextcloudHost | default "nextcloud.test" }}
 {{- end -}}
 
 {{- define "opnc.keycloakHost" -}}
-{{ .Values.keycloakHost | default "keycloak.local" }}
+{{ .Values.keycloakHost | default "keycloak.test" }}
 {{- end -}}
 
 {{/*
