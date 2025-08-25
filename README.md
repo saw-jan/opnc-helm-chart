@@ -44,7 +44,7 @@
 
 4. Add these hosts to your `/etc/hosts` file:
    ```bash
-    sudo echo "$(minikube ip) openproject.local nextcloud.local keycloak.local" | sudo tee -a /etc/hosts
+    sudo echo "$(minikube ip) openproject.test nextcloud.test keycloak.test" | sudo tee -a /etc/hosts
    ```
 
 NOTE: make sure at least one `setup-job-*` pod is completed successfully before proceeding.
@@ -57,9 +57,9 @@ setup-job-mkgrf                               0/1     Completed   0          12m
 
 Access the services via the following URLs:
 
-- OpenProject: [https://openproject.local](https://openproject.local)
-- Nextcloud: [https://nextcloud.local](https://nextcloud.local)
-- Keycloak: [https://keycloak.local](https://keycloak.local)
+- OpenProject: [https://openproject.test](https://openproject.test)
+- Nextcloud: [https://nextcloud.test](https://nextcloud.test)
+- Keycloak: [https://keycloak.test](https://keycloak.test)
 
 To uninstall the deployment, run:
 
