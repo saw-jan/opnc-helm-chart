@@ -1,0 +1,55 @@
+{{ if or .Values.openproject.gitSourceBranch .Values.openproject.localSourcePath }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: op-buildsource-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: build-source
+          image: openproject/openproject:{{ .Values.openproject.dockerTag | default "dev" }}
+          command: ['/scripts/setup-op-source.sh']
+          env:
+            - name: OP_GIT_SOURCE_BRANCH
+              value: '{{ .Values.openproject.gitSourceBranch }}'
+            {{ if .Values.openproject.localSourcePath }}
+            - name: OP_USE_LOCAL_SOURCE
+              value: 'true'
+            {{ end }}
+          volumeMounts:
+            - name: build-source-script
+              mountPath: /scripts/setup-op-source.sh
+              subPath: setup-op-source.sh
+            - name: op-source-data
+              mountPath: /home/app/gitapp
+      volumes:
+        - name: build-source-script
+          configMap:
+            name: op-setupsource-configmap
+            defaultMode: 0755
+        {{ if and .Values.openproject.gitSourceBranch (not .Values.openproject.localSourcePath) }}
+        - name: op-source-data
+          persistentVolumeClaim:
+            claimName: op-source-pvc
+        {{ end }}
+        {{ if .Values.openproject.localSourcePath }}
+        - name: op-source-data
+          hostPath:
+            path: {{ .Values.openproject.localSourcePath }}
+            type: Directory
+        {{ end }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: op-source-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+{{ end }}

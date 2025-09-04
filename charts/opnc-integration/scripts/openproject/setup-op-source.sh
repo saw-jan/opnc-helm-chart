@@ -4,7 +4,9 @@ set -eo pipefail
 
 APP_PATH=/home/app/gitapp
 
-if [[ -n $(ls -A "$APP_PATH") ]]; then
+echo "[INFO] Building OpenProject from source..."
+
+if [[ -n $(ls -A "$APP_PATH") ]] && [[ "$OP_USE_LOCAL_SOURCE" != 'true' ]]; then
     echo "[ERROR] '$APP_PATH' is not empty. Please delete the volume and try again."
     exit 1
 fi
@@ -12,8 +14,13 @@ fi
 mkdir -p "$APP_PATH" && cd "$APP_PATH"
 chown $APP_USER:$APP_USER "$APP_PATH"
 
-echo "[INFO] Cloning OpenProject from branch: $OP_GIT_SOURCE_BRANCH"
-git clone --branch "$OP_GIT_SOURCE_BRANCH" --depth 1 --single-branch "https://github.com/opf/openproject" "$APP_PATH"
+if [[ -n "$OP_GIT_SOURCE_BRANCH" ]] && [[ "$OP_USE_LOCAL_SOURCE" != 'true' ]]; then
+    echo "[INFO] Cloning OpenProject from branch: $OP_GIT_SOURCE_BRANCH"
+    git clone --branch "$OP_GIT_SOURCE_BRANCH" --depth 1 --single-branch "https://github.com/opf/openproject" "$APP_PATH"
+fi
+
+# trust git repos
+git config --global safe.directory '*'
 
 cd "$APP_PATH"
 bash ./docker/prod/setup/bundle-install.sh
@@ -30,4 +37,4 @@ rm -rf "$APP_PATH/tmp"
 chmod +t "$APP_PATH"
 chmod +t "/tmp"
 
-touch gitsource-build-completed
+touch build-completed

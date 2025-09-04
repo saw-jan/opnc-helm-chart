@@ -25,11 +25,16 @@ openproject:
   # Example: dev                             #
   ############################################
   gitSourceBranch: ''
+  ############################################
+  # Mount and use local source code          #
+  # Override 'gitSourceBranch'               #
+  ############################################
+  localSourcePath: ''
   ####################################################
-  # Path to map cloned OpenProject source inside pod #
+  # Path to map custom OpenProject source inside pod #
   # NOTE: this will server as APP_PATH               #
   ####################################################
-  gitSourcePath: '/home/app/gitapp'
+  customSourceMountPath: '/home/app/gitapp'
   postgresql:
     host: op-postgresql
     password: openproject

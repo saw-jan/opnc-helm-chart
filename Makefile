@@ -24,7 +24,10 @@ setup:
 		--set crds.enabled=true
 
 deploy:
-	@helmfile apply
+	@helmfile sync
+
+deploy-local:
+	@helmfile sync -e local
 
 teardown:
 	@./scripts/teardown

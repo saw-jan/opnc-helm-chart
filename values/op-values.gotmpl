@@ -34,8 +34,11 @@ environment:
   CURL_CA_BUNDLE: {{ .Values.ingress.caCertFilePath }}
   SSL_CERT_FILE: {{ .Values.ingress.caCertFilePath }}
   OP_GIT_SOURCE_BRANCH: {{ .Values.openproject.gitSourceBranch | quote }}
-  {{ if .Values.openproject.gitSourceBranch }}
-  APP_PATH: {{ .Values.openproject.gitSourcePath | quote }}
+  {{ if or .Values.openproject.gitSourceBranch .Values.openproject.localSourcePath }}
+  APP_PATH: {{ .Values.openproject.customSourceMountPath | quote }}
+  {{ end }}
+  {{ if .Values.openproject.localSourcePath }}
+  OP_USE_LOCAL_SOURCE: 'true'
   {{ end }}
 dbInit:
   resources:
@@ -64,10 +67,18 @@ extraVolumes:
   - name: ca-cert
     secret:
       secretName: {{ or .Values.ingress.tlsSecretName .Values.ingress.existingTlsSecretName }}
-  {{ if .Values.openproject.gitSourceBranch }}
-  - name: op-git-source
+  {{ if and .Values.openproject.gitSourceBranch (not .Values.openproject.localSourcePath) }}
+  - name: op-source-data
     persistentVolumeClaim:
-      claimName: op-gitsource-pvc
+      claimName: op-source-pvc
+  {{ end }}
+  {{ if .Values.openproject.localSourcePath }}
+  - name: op-source-data
+    hostPath:
+      path: {{ .Values.openproject.localSourcePath }}
+      type: Directory
+  - name: node-modules
+    emptyDir: {}
   {{ end }}
 extraVolumeMounts:
   - name: entrypoint
@@ -76,9 +87,13 @@ extraVolumeMounts:
   - name: ca-cert
     mountPath: {{ .Values.ingress.caCertFilePath }}
     subPath: ca.crt
-  {{ if .Values.openproject.gitSourceBranch }}
-  - name: op-git-source
-    mountPath: {{ .Values.openproject.gitSourcePath | quote }}
+  {{ if or .Values.openproject.gitSourceBranch .Values.openproject.localSourcePath }}
+  - name: op-source-data
+    mountPath: {{ .Values.openproject.customSourceMountPath | quote }}
+  {{ end }}
+  {{ if .Values.openproject.localSourcePath }}
+  - name: node-modules
+    mountPath: '{{ .Values.openproject.customSourceMountPath }}/node_modules'
   {{ end }}
 postgresql:
   fullnameOverride: {{ .Values.openproject.postgresql.host }}
