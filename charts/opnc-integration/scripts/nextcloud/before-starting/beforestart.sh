@@ -89,3 +89,4 @@ $OCC user_oidc:provider "$OIDC_KEYCLOAK_PROVIDER_NAME" \
     -s "$OIDC_KEYCLOAK_NEXTCLOUD_CLIENT_SECRET" \
     -d "$OIDC_KEYCLOAK_DISCOVERY_URL" \
     -o "openid profile email api_v3"
+$OCC user_oidc:provider "$OIDC_KEYCLOAK_PROVIDER_NAME" --check-bearer 1
