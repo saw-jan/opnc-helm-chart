@@ -34,5 +34,6 @@ oidcProvider:
   openprojectClientId: {{ .Values.keycloak.realm.clients.openproject.id }}
 
 ingress:
+  ingressClassName: {{ .Values.integration.ingressClassName }}
   tlsSecretName: {{ .Values.ingress.tlsSecretName }}
   existingTlsSecretName: {{ .Values.ingress.existingTlsSecretName }}

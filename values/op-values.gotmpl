@@ -20,6 +20,7 @@ openproject:
     userinfoEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo'
     host: {{ .Values.keycloak.host }}
 environment:
+  RAILS_ENV: {{ .Values.openproject.railsEnv | quote }}
   OPENPROJECT_LOG__LEVEL: info
   OPENPROJECT_EDITION: standard
   OPENPROJECT_DEV_EXTRA_HOSTS: {{ .Values.openproject.host }}
@@ -77,8 +78,6 @@ extraVolumes:
     hostPath:
       path: {{ .Values.openproject.localSourcePath }}
       type: Directory
-  - name: node-modules
-    emptyDir: {}
   {{ end }}
 extraVolumeMounts:
   - name: entrypoint
@@ -90,10 +89,6 @@ extraVolumeMounts:
   {{ if or .Values.openproject.gitSourceBranch .Values.openproject.localSourcePath }}
   - name: op-source-data
     mountPath: {{ .Values.openproject.customSourceMountPath | quote }}
-  {{ end }}
-  {{ if .Values.openproject.localSourcePath }}
-  - name: node-modules
-    mountPath: '{{ .Values.openproject.customSourceMountPath }}/node_modules'
   {{ end }}
 postgresql:
   fullnameOverride: {{ .Values.openproject.postgresql.host }}

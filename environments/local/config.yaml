@@ -1,2 +1,3 @@
 openproject:
   localSourcePath: '/localDir/openproject'
+  railsEnv: 'development'

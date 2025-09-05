@@ -23,7 +23,7 @@ spec:
               mountPath: /scripts/setup-op-source.sh
               subPath: setup-op-source.sh
             - name: op-source-data
-              mountPath: /home/app/gitapp
+              mountPath: /home/app/openproject
       volumes:
         - name: build-source-script
           configMap:
@@ -41,6 +41,7 @@ spec:
             type: Directory
         {{ end }}
 
+{{ if and .Values.openproject.gitSourceBranch (not .Values.openproject.localSourcePath) }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -52,4 +53,5 @@ spec:
   resources:
     requests:
       storage: 5Gi
+{{ end }}
 {{ end }}
