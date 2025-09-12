@@ -17,14 +17,24 @@ repositories:
     url: https://nextcloud.github.io/helm
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
+  - name: cert-manager
+    url: https://charts.jetstack.io
 
 namespace: opnc-integration
 
 releases:
+  - name: cert-manager
+    chart: cert-manager/cert-manager
+    version: ~1.18.2
+    values:
+      - crds:
+          enabled: true
   - name: opnc-integration
     chart: ./charts/opnc-integration
     values:
       - values/integration.gotmpl
+    needs:
+      - cert-manager
   - name: openproject
     chart: ./charts/openproject
     values:
