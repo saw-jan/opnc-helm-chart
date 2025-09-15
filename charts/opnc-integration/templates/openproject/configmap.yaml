@@ -7,11 +7,13 @@ data:
   entrypoint.sh: |
 {{ .Files.Get "scripts/openproject/entrypoint.sh" | indent 4 }}
 
+{{ if or .Values.openproject.gitSourceBranch .Values.openproject.localSourcePath }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: op-gitsource-configmap
+  name: op-setupsource-configmap
 data:
-  setup-op-git.sh: |
-{{ .Files.Get "scripts/openproject/setup-op-git.sh" | indent 4 }}
+  setup-op-source.sh: |
+{{ .Files.Get "scripts/openproject/setup-op-source.sh" | indent 4 }}
+{{ end }}

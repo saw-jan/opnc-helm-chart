@@ -35,6 +35,8 @@ openproject:
   # NOTE: 'version' will be ignored if this is set
   # Example: dev
   gitSourceBranch: ''
+  # Local host path to OpenProject source code
+  localSourcePath: ''
   dockerTag: ''
 
 extraVolumes: []

@@ -4,12 +4,14 @@ set -eo pipefail
 
 cd "$APP_PATH"
 
-if [[ -n "$OP_GIT_SOURCE_BRANCH" ]]; then
-    while [[ ! -f "$APP_PATH/gitsource-build-completed" ]]; do
-        echo "[INFO] Waiting build from git source to complete..."
+if [[ -n "$OP_GIT_SOURCE_BRANCH" || "$OP_USE_LOCAL_SOURCE" == 'true' ]]; then
+    while [[ ! -f "$APP_PATH/files/build-completed" ]]; do
+        echo "[INFO] Waiting build from source to complete..."
         sleep 10
     done
-    bash ./docker/prod/setup/postinstall-common.sh
+    if [[ "$OP_USE_LOCAL_SOURCE" == 'true' ]]; then
+        export BUNDLE_APP_CONFIG=./.bundle
+    fi
 fi
 
 args=()

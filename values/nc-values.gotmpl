@@ -22,7 +22,7 @@ nextcloud:
         - name: presetup
           mountPath: /docker-entrypoint-hooks.d/presetup.sh
           subPath: presetup.sh
-        - name: op-git-source
+        - name: nc-git-source
           mountPath: /usr/src/nc
   extraEnv:
     - name: NC_GIT_SOURCE_BRANCH
@@ -64,7 +64,7 @@ nextcloud:
       configMap:
         name: nc-entrypoint-configmap
         defaultMode: 0755
-    - name: op-git-source
+    - name: nc-git-source
       persistentVolumeClaim:
         claimName: nc-gitsource-pvc
   extraVolumeMounts:
@@ -80,7 +80,7 @@ nextcloud:
     - name: entrypoint
       mountPath: /entrypoint.sh
       subPath: entrypoint.sh
-    - name: op-git-source
+    - name: nc-git-source
       mountPath: /usr/src/nc
 internalDatabase:
   enabled: false

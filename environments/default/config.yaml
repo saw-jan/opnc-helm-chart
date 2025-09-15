@@ -8,6 +8,7 @@ integration:
   #   - sso-external
   ############################################
   setupMethod: 'oauth2'
+  ingressClassName: ''
 
 openproject:
   fullnameOverride: openproject
@@ -25,11 +26,16 @@ openproject:
   # Example: dev                             #
   ############################################
   gitSourceBranch: ''
+  ############################################
+  # Mount and use local source code          #
+  # Override 'gitSourceBranch'               #
+  ############################################
+  localSourcePath: ''
   ####################################################
-  # Path to map cloned OpenProject source inside pod #
+  # Path to map custom OpenProject source inside pod #
   # NOTE: this will server as APP_PATH               #
   ####################################################
-  gitSourcePath: '/home/app/gitapp'
+  customSourceMountPath: '/home/app/openproject'
   postgresql:
     host: op-postgresql
     password: openproject
@@ -37,6 +43,11 @@ openproject:
   # Enterprise Token                         #
   ############################################
   enterpriseToken: ''
+  ############################################
+  # Rails environment                        #
+  # Examples: production, development, tests #
+  ############################################
+  railsEnv: 'production'
 
 nextcloud:
   ############################################
