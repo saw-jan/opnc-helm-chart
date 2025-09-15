@@ -20,12 +20,12 @@ setup:
 deploy:
 	@helmfile sync
 
-deploy-local:
+deploy-dev:
 	@if [ -z "$(LOCAL_SOURCE_PATH)" ]; then echo "[ERROR] 'LOCAL_SOURCE_PATH' is not provided."; exit 1; fi
 	@if [ ! -d "$(LOCAL_SOURCE_PATH)" ]; then echo "[ERROR] 'LOCAL_SOURCE_PATH' does not exist or is not a directory."; exit 1; fi
 	@if [ -f tmp/mount.pid ]; then kill `cat tmp/mount.pid` || true; fi
 	@minikube mount $(LOCAL_SOURCE_PATH):/localDir & echo $$! > tmp/mount.pid
-	@helmfile sync -e local
+	@helmfile sync -e dev
 
 teardown:
 	@./scripts/teardown

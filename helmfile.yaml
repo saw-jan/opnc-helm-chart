@@ -3,10 +3,10 @@ environments:
   default:
     values:
       - environments/default/config.yaml
-  local:
+  dev:
     values:
       - environments/default/config.yaml
-      - environments/local/config.yaml
+      - environments/dev/config.yaml
 ---
 repositories:
   # Issue: https://github.com/opf/helm-charts/issues/215
