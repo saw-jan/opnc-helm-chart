@@ -37,7 +37,6 @@ if [[ "$OP_USE_LOCAL_SOURCE" == "true" ]]; then
     export BUNDLE_WITHOUT=""
     bundle config set --local path './vendor/bundle'
     bundle config set --local with 'development test'
-    bundle config
     bundle install
 else
     bash ./docker/prod/setup/bundle-install.sh
@@ -55,6 +54,7 @@ chmod +t "$APP_PATH"
 chmod +t "/tmp"
 
 if [[ "$OP_USE_LOCAL_SOURCE" == "true" ]]; then
+    sed -i 's/production:/development:/' ./config/database.yml
     mv frontend/package.json.bak frontend/package.json
     cp -rfL "$APP_PATH"/* /home/app/openproject/
     cp -rf "$APP_PATH"/.bundle /home/app/openproject/

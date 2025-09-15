@@ -213,7 +213,7 @@ if expr "$1" : "apache" 1>/dev/null || [ "$1" = "php-fpm" ] || [ "${NEXTCLOUD_UP
 
             # /usr/src/nc/custom_apps holds the apps built from git sources
             # copy custom apps if they exist
-            if [ -n "$(ls -A /usr/src/nc/custom_apps)" ]; then
+            if [ -d /usr/src/nc/custom_apps ] && [ -n "$(ls -A /usr/src/nc/custom_apps)" ]; then
                 echo "[INFO] Copying custom apps..."
                 rsync $rsync_options --delete --include '/custom_apps/' --exclude '/*' "/usr/src/nc/" /var/www/html/
             fi
