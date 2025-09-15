@@ -6,6 +6,8 @@ help:
 	@echo "    cpu         - Number of CPUs to allocate to Kubernetes (E.g.: setup cpu=4)"
 	@echo "    memory      - Amount of RAM to allocate to Kubernetes (E.g.: setup memory=8g)"
 	@echo "  deploy        - Deploy the integration setup: OpenProject, Nextcloud and Keycloak"
+	@echo "  deploy-dev    - Deploy the integration setup in development mode with local OpenProject source code."
+	@echo "                  LOCAL_SOURCE_PATH: Path to the local source code (E.g.: deploy-dev LOCAL_SOURCE_PATH=/path/to/openproject)"
 	@echo "  teardown      - Delete the integration deployment from the K8s cluster"
 	@echo "  teardown-all  - Delete the K8s cluster"
 
