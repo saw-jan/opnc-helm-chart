@@ -114,6 +114,16 @@ nextcloud:
 
 _**NOTE**: This can take a long time to build the source code and deploy the application._
 
+## Serve OpenProject From Local Branch
+
+You can serve the OpenProject using the local source path. Run the following command:
+
+```bash
+make deploy-dev LOCAL_SOURCE_PATH=<path-to-local-openproject-repo>
+```
+
+_**NOTE**: This can take a long time to build the source code and deploy the application._
+
 ## Trust Self-Signed Certificates
 
 If you are using self-signed certificates, you may need to trust them in your browser. Follow these steps:
