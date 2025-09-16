@@ -137,5 +137,6 @@ elif [[ "$INTEGRATION_APP_SETUP_METHOD" == "sso-external" ]]; then
         OP_ADMIN_PASSWORD=admin \
         OP_STORAGE_NAME=nextcloud \
         OP_STORAGE_AUDIENCE=nextcloud \
+        OP_STORAGE_SCOPE=add-nc-aud \
         bash integration_oidc_setup.sh
 fi

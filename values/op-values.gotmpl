@@ -11,14 +11,25 @@ openproject:
   admin_user:
     password_reset: 'false'
   oidc:
-    enabled: true
+    enabled: {{ if not (eq .Values.integration.setupMethod "oauth2") }}true{{ else }}false{{ end }}
+    {{ if .Values.integration.setupMethod | eq "sso-external" }}
     displayName: {{ .Values.keycloak.providerName }}
     identifier: {{ .Values.keycloak.realm.clients.openproject.id }}
     secret: {{ .Values.keycloak.realm.clients.openproject.secret }}
-    authorizationEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/auth'
-    tokenEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/token'
-    userinfoEndpoint: '/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo'
+    authorizationEndpoint: /realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/auth
+    tokenEndpoint: /realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/token
+    userinfoEndpoint: /realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/userinfo
     host: {{ .Values.keycloak.host }}
+
+    {{ else if .Values.integration.setupMethod | eq "sso-nextcloud" }}
+    displayName: 'nextcloud'
+    identifier: 'openproject' # this should be replaced with actual value
+    secret: 'openproject' # this should be replaced with actual value
+    authorizationEndpoint: /index.php/apps/oidc/authorize
+    tokenEndpoint: /index.php/apps/oidc/token
+    userinfoEndpoint: /index.php/apps/oidc/userinfo
+    host: {{ .Values.nextcloud.host }}
+    {{ end }}
 environment:
   RAILS_ENV: {{ .Values.openproject.railsEnv | quote }}
   OPENPROJECT_LOG__LEVEL: info
@@ -27,9 +38,17 @@ environment:
   OPENPROJECT_APIV3__ENABLE__BASIC__AUTH: 'true'
   OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_USER: 'admin'
   OPENPROJECT_AUTHENTICATION_GLOBAL__BASIC__AUTH_PASSWORD: 'admin'
+
+  {{ if .Values.integration.setupMethod | eq "sso-external" }}
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_ISSUER: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_JWKS__URI: https://{{ .Values.keycloak.host }}/realms/{{ .Values.keycloak.realm.name }}/protocol/openid-connect/certs
   OPENPROJECT_OPENID__CONNECT_KEYCLOAK_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
+  {{ else if .Values.integration.setupMethod | eq "sso-nextcloud" }}
+  OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_ISSUER: https://{{ .Values.nextcloud.host }}
+  OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_JWKS__URI: https://{{ .Values.nextcloud.host }}/remote.php/apps/oidc/jwks
+  OPENPROJECT_OPENID__CONNECT_NEXTCLOUD_POST__LOGOUT__REDIRECT__URI: https://{{ .Values.openproject.host }}/
+  {{ end }}
+
   DATABASE_HOST: {{ .Values.openproject.postgresql.host }}
   OPENPROJECT_SEED__ENTERPRISE__TOKEN: {{ toYaml .Values.openproject.enterpriseToken | indent 2 }}
   CURL_CA_BUNDLE: {{ .Values.ingress.caCertFilePath }}
