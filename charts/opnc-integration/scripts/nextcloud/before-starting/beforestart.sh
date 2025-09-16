@@ -90,3 +90,4 @@ $OCC user_oidc:provider "$OIDC_KEYCLOAK_PROVIDER_NAME" \
     -d "$OIDC_KEYCLOAK_DISCOVERY_URL" \
     -o "openid profile email api_v3"
 $OCC user_oidc:provider "$OIDC_KEYCLOAK_PROVIDER_NAME" --check-bearer 1
+$OCC config:app:set oidc refresh_expire_time --value "never"
