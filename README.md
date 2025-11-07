@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This repo is no longer actively maintained. Please refer to [this repo](https://github.com/opf/integration-qa-helmfile) for the updates.
+
 # Openproject-Nextcloud Integration Helm Chart
 
 - [Dependencies](#dependencies)
